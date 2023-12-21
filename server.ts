@@ -20,7 +20,7 @@ const api_url = environment.serverUrl;
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
-  const distFolder = join(process.cwd(), 'dist/healing-tube/browser');
+  const distFolder = join(process.cwd(), 'dist/christian-team/browser');
   const indexHtml = existsSync(join(distFolder, 'index.original.html'))
     ? 'index.original.html'
     : 'index';

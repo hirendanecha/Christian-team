@@ -13,7 +13,7 @@ import { Howl } from 'howler';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'healing-tube';
+  title = 'Christian-team';
   showButton = false;
   tab: any;
 
