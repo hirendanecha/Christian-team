@@ -1,6 +1,6 @@
-const url = 'https://api.healing.tube';
-const webUrl = 'https://healing.tube/';
-const tubeUrl = 'https://video.healing.tube/'
+const url = 'https://api.christian.team';
+const webUrl = 'https://christian.team/';
+const tubeUrl = 'https://tube.christian.team/'
 // const url = 'http://localhost:8080';
 // const webUrl = 'http://localhost:4200/';
 
@@ -11,5 +11,5 @@ export const environment = {
   socketUrl: `${url}/`,
   webUrl: webUrl,
   tubeUrl: tubeUrl,
-  domain: '.healing.tube'
+  domain: '.christian.team'
 };

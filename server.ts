@@ -84,17 +84,17 @@ export function app(): express.Express {
         }
         const params = req.params[0];
         var seo: any = {
-          title: 'Healing Tube',
+          title: 'Christian Team',
           description:
-            'The Umbrella platform for All freedom based projects worldwide',
+            'The Christian Social platform to unite Christian worldwide',
           image:
-            'https://www.healing.tube/assets/images/christian-team-Logo.png',
-          site: 'https://www.healing.tube/',
-          url: 'https://www.healing.tube' + params,
-          keywords: 'HealingTube',
+            'https://christian.team/assets/images/profile-cover.png',
+          site: 'https://christian.team/',
+          url: 'https://christian.team' + params,
+          keywords: 'ChristianTeam',
         };
         if (
-          params.indexOf('communities/') > -1 ||
+          params.indexOf('my-church/') > -1 ||
           params.indexOf('pages/') > -1
         ) {
           let id = params.split('/');
@@ -155,7 +155,7 @@ export function app(): express.Express {
           const talent = {
             name: post?.title || post?.albumname || 'Healing.Tube Post',
             description: pdhtml?.textContent || 'Post content',
-            image: post?.thumbfilename || post?.metaimage || post?.imageUrl || 'https://www.healing.tube/assets/images/Healing-Tube-Logo.png',
+            image: post?.thumbfilename || post?.metaimage || post?.imageUrl || 'https://christian.team/assets/images/profile-cover.png',
           };
           seo.title = talent.name;
           seo.description = strip_html_tags(talent.description);

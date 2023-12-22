@@ -6,8 +6,8 @@
         <div class="card text-center">
           <div class="card-body">
             <p class="card-text">
-              Find a Naturopathic Doctor or Holistic Church to have a
-              private video consultation?
+              Find a Naturopathic Doctor or Holistic Church to have a private
+              video consultation?
             </p>
             <button>
               <a (click)="backPreview()" class="btn btn-primary">Select</a>
@@ -54,7 +54,7 @@
           (change)="updateCheckbox('country')"
         />
         <label class="form-check-label selectCountry" for="countryCheckbox">
-          <span class="d-none d-sm-block">Find a local church in&nbsp;</span
+          <span class="d-none d-sm-block">Find a Church in&nbsp;</span
           >Country:
           <select
             id="Country"
@@ -100,7 +100,7 @@
           (change)="updateCheckbox('worldwide')"
         />
         <label class="form-check-label selectCountry" for="worldwideCheckbox">
-          Worldwide Located Worldwide
+          Located Worldwide
         </label>
       </div>
     </div>
@@ -144,7 +144,11 @@
                 (change)="onAreaboxChange($event, area)"
               />
               <div class="title-container">
-                <label class="form-check-label ms-2" for="modality{{ area.aId }}" [title]="area.name">
+                <label
+                  class="form-check-label ms-2"
+                  for="modality{{ area.aId }}"
+                  [title]="area.name"
+                >
                   {{ area.name }}
                 </label>
               </div>
