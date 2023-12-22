@@ -232,14 +232,14 @@
 
 .landing-btn {
   .btn-primary {
-    background: #11134d;
+    background: #1d9bf0;
     color: #fff;
-    border: #11134d;
+    border: var(--body-color);
     height: 38px;
   }
   .btn-outline {
-    border-color: #11134d;
-    color: #11134d;
+    border-color: #1d9bf0;
+    color: #1d9bf0;
     height: 38px;
   }
 }
