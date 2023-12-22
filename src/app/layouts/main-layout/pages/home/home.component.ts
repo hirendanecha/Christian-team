@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isNavigationEnd = true;
       });
       const data = {
-        title: 'HealingTube',
+        title: 'ChristianTube',
         url: `${window.location.href}`,
       };
       this.seoService.updateSeoMetaData(data);

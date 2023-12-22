@@ -1,5 +1,5 @@
 .main-container {
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
   // background: #11134d;
 
@@ -9,21 +9,22 @@
   .c-fonts {
     // font-size: min(max(25px, 2vw), 44px);
     font-size: 22px;
-    
+
     @media (max-width: 999px) {
       font-size: 16px;
     }
   }
 
   .custom-height {
-    background-image: url(/assets/images/landingpage/healing-hm-pg.jpg);
+    background-image: url(/assets/images/landingpage/healing-hm-pg-1.png);
     background-size: cover;
     background-repeat: no-repeat;
     object-fit: cover;
-    height: calc(100vh - 48px);
-    min-height: 400px;
+    height: 100vh;
+    background-position: center;
 
     .banner-text {
+      display: none;
       max-width: 600px;
       width: 100%;
       background-color: #0b0d0ed4;
