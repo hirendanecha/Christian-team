@@ -231,15 +231,15 @@
 }
 
 .landing-btn {
-  .btn-primary {
+  .cmn-btn {
     background: #1d9bf0;
     color: #fff;
     border: var(--body-color);
     height: 38px;
   }
   .btn-outline {
-    border-color: #1d9bf0;
-    color: #1d9bf0;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
     height: 38px;
   }
 }
