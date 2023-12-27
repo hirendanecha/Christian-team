@@ -600,13 +600,15 @@ export class PostCardComponent implements OnInit {
   }
 
   onTagUserInputChangeEvent(data: any): void {
-    this.commentData.comment = data?.html;
+    // this.commentData.comment = data?.html;
+    this.extractLargeImageFromContent(data.html);
     this.commentData.meta = data?.meta;
     this.commentMessageTags = data?.tags;
     // console.log(this.commentData)
   }
   onTagUserReplayInputChangeEvent(data: any): void {
-    this.commentData.comment = data?.html;
+    this.extractLargeImageFromContent(data.html);
+    // this.commentData.comment = data?.html;
     this.commentData.meta = data?.meta;
     this.commentMessageTags = data?.tags;
   }
@@ -734,5 +736,50 @@ export class PostCardComponent implements OnInit {
       this.commentMessageInputValue +
       `<img src=${emoji} width="60" height="60">`;
 
+  }
+
+  extractLargeImageFromContent(content: string): void {
+    const contentContainer = document.createElement('div');
+    contentContainer.innerHTML = content;
+    const imgTag = contentContainer.querySelector('img');
+
+    if (imgTag) {
+      const imgTitle = imgTag.getAttribute('title');
+      const imgStyle = imgTag.getAttribute('style');
+      const imageGif = imgTag
+        .getAttribute('src')
+        .toLowerCase()
+        .endsWith('.gif');
+      if (!imgTitle && !imgStyle && !imageGif) {
+        const copyImage = imgTag.getAttribute('src');
+        const bytes = copyImage.length;
+        const megabytes = bytes / (1024 * 1024);
+        if (megabytes > 1) {
+          this.commentData.comment = content.replace(copyImage, '');
+          const base64Image = copyImage
+            .trim()
+            .replace(/^data:image\/\w+;base64,/, '');
+          try {
+            const binaryString = window.atob(base64Image);
+            const uint8Array = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+              uint8Array[i] = binaryString.charCodeAt(i);
+            }
+            const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+            const fileName = 'copyImage.jpg';
+            const file = new File([blob], fileName, { type: 'image/jpeg' });
+            this.commentData['file'] = file;
+          } catch (error) {
+            console.error('Base64 decoding error:', error);
+          }
+        } else {
+          this.commentData.comment = content;
+        }
+      } else {
+        this.commentData.comment = content;
+      }
+    } else {
+      this.commentData.comment = content;
+    }
   }
 }
