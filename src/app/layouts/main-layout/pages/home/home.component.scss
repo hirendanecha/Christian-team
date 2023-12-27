@@ -113,6 +113,13 @@
       left: 240px;
     }
   }
+  .comment-emoji,
+  .replay-comment-emoji {
+    .inline-meta-loader {
+      top: unset;
+      left: -50px;
+    }
+  }
   .c-icon-color {
     svg path {
       fill: var(--secondary-color);

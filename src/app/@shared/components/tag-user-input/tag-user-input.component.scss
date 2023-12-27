@@ -11,6 +11,7 @@
     max-width: 541px;
     width: calc(100% - 60px);
     overflow: hidden;
+    overflow-wrap: anywhere;
 
     @media (max-width: 767px) {
       max-width: 395px;
@@ -94,6 +95,7 @@
       line-height: unset !important;
       color: var(--para-2nd-color) !important;
       font-weight: 400 !important;
+      overflow-wrap: anywhere;
     }
     // br {
     //   display: none;

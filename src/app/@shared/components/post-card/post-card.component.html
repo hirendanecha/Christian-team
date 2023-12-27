@@ -429,7 +429,7 @@
               class="comment-emoji"
               placeholder="Comment"
               [value]="commentMessageInputValue"
-              [isShowMetaLoader]="false"
+              [isShowMetaLoader]="true"
               [isShowEmojis]="true"
               (onDataChange)="onTagUserInputChangeEvent($event)"
             />
@@ -633,7 +633,7 @@
                       class="replay-comment-emoji"
                       placeholder="Reply comment"
                       [value]="replaycommentMessageInputValue"
-                      [isShowMetaLoader]="false"
+                      [isShowMetaLoader]="true"
                       [isShowEmojis]="true"
                       (onDataChange)="onTagUserReplayInputChangeEvent($event)"
                     />
