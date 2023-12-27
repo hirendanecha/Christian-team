@@ -766,7 +766,7 @@ export class PostCardComponent implements OnInit {
               uint8Array[i] = binaryString.charCodeAt(i);
             }
             const blob = new Blob([uint8Array], { type: 'image/jpeg' });
-            const fileName = 'copyImage.jpg';
+            const fileName = `copyImage-${new Date().getTime()}.jpg`;
             const file = new File([blob], fileName, { type: 'image/jpeg' });
             this.commentData['file'] = file;
           } catch (error) {

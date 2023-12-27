@@ -611,7 +611,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
               uint8Array[i] = binaryString.charCodeAt(i);
             }
             const blob = new Blob([uint8Array], { type: 'image/jpeg' });
-            const fileName = 'copyImage.jpg';
+            const fileName = `copyImage-${new Date().getTime()}.jpg`;
             const file = new File([blob], fileName, { type: 'image/jpeg' });
             this.postData.file = file;
           } catch (error) {
