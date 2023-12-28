@@ -6,6 +6,7 @@ import { debounceTime, forkJoin, fromEvent } from 'rxjs';
 import { Community } from 'src/app/@shared/constant/customer';
 import { CommunityService } from 'src/app/@shared/services/community.service';
 import { CustomerService } from 'src/app/@shared/services/customer.service';
+import { SharedService } from 'src/app/@shared/services/shared.service';
 import { ToastService } from 'src/app/@shared/services/toast.service';
 import { UploadFilesService } from 'src/app/@shared/services/upload-files.service';
 import { slugify } from 'src/app/@shared/utils/utils';
@@ -31,6 +32,8 @@ export class AddFreedomPageComponent implements OnInit, AfterViewInit {
   coverImg: any;
   userId = '';
   profileId = '';
+  inputLinkValue1 = '';
+  inputLinkValue2 = '';
   originUrl = environment.webUrl + 'page/';
 
   pageForm = new FormGroup({
@@ -50,6 +53,11 @@ export class AddFreedomPageComponent implements OnInit, AfterViewInit {
   });
   allCountryData: any;
   defaultCountry = 'US';
+  advertizement = {
+    communityId: null,
+    link1: null,
+    link2: null
+  }
   @ViewChild('zipCode') zipCode: ElementRef;
 
   constructor(
@@ -58,7 +66,8 @@ export class AddFreedomPageComponent implements OnInit, AfterViewInit {
     private communityService: CommunityService,
     private toastService: ToastService,
     private customerService: CustomerService,
-    private uploadService: UploadFilesService
+    private uploadService: UploadFilesService,
+    private sharedService: SharedService
   ) {
     this.userId = window.sessionStorage.user_id;
     this.profileId = localStorage.getItem('profileId');
@@ -199,6 +208,12 @@ export class AddFreedomPageComponent implements OnInit, AfterViewInit {
                 this.spinner.hide();
               }
           });
+          if (this.data.link1 || this.data.link2) {
+            this.editAdvertizeMentLink(this.data.Id);
+          } else {
+            this.createAdvertizeMentLink(this.data.Id);
+          }
+          this.sharedService.advertizementLink = [];
       } else {
         this.spinner.hide();
         this.toastService.danger('Please enter mandatory fields(*) data.');
@@ -226,6 +241,38 @@ export class AddFreedomPageComponent implements OnInit, AfterViewInit {
     }
   }
 
+  createAdvertizeMentLink(id) {
+    if (id && (this.advertizement.link1 || this.advertizement.link2)) {
+      this.advertizement.communityId = id
+      this.communityService.createAdvertizeMentLink(this.advertizement).subscribe({
+        next: (res => {
+          console.log(res);
+        }),
+        error: (err => {
+          console.log(err)
+        })
+      })
+    }
+  }
+
+  editAdvertizeMentLink(id) {
+    if (id && (this.advertizement.link1 || this.advertizement.link2)) {
+      const data = {
+        communityId: id,
+        link1: this.advertizement.link1 || null,
+        link2: this.advertizement.link2 || null
+      }
+      this.communityService.editAdvertizeMentLink(data).subscribe({
+        next: (res => {
+          console.log(res);
+        }),
+        error: (err => {
+          console.log(err)
+        })
+      })
+    }
+  }
+  
   getProfilePic() {
     // this.spinner.show();
     this.communityService.getLogoImg(this.userId).subscribe(
@@ -345,5 +392,13 @@ export class AddFreedomPageComponent implements OnInit, AfterViewInit {
           console.log(err);
         }
       );
+  }
+  onTagUserInputChangeEvent(data: any): void {
+    this.advertizement.link1 = data?.meta?.url
+    console.log(data)
+  }
+  onTagUserInputChangeEvent1(data): void {
+    this.advertizement.link2 = data?.meta?.url
+    console.log(data)
   }
 }

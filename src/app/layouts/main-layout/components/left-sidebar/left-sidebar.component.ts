@@ -31,6 +31,7 @@ export class LeftSidebarComponent implements OnInit {
   };
   profileId: number
   originalFavicon: HTMLLinkElement;
+  
   constructor(
     private modalService: NgbModal,
     public sharedService: SharedService,
