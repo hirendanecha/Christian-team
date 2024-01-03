@@ -16,7 +16,7 @@
   }
 
   .custom-height {
-    background-image: url(/assets/images/landingpage/healing-hm-pg-1.png);
+    background-image: url(/assets/images/landingpage/Christian.team-hm-pg.jpg);
     background-size: cover;
     background-repeat: no-repeat;
     object-fit: cover;
@@ -24,13 +24,18 @@
     background-position: center;
 
     .banner-text {
-      display: none;
       max-width: 600px;
       width: 100%;
-      background-color: #0b0d0ed4;
+      // background-color: #0b0d0ed4;
       border-radius: 5px;
-      padding: 40px;
+      // padding: 40px;
       height: 300px;
+      h1 {
+        font-size: min(max(30px, 3vw), 50px);
+      }
+      h3 {
+        font-size: min(max(18px, 2vw), 32px);
+      }
     }
 
     @media (max-width: 600px) {
