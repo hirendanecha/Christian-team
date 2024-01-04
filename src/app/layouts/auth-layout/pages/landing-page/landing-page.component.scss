@@ -32,20 +32,11 @@
       height: 300px;
       h1 {
         color: black !important;
-        font-size: min(max(40px, 3vw), 50px);
-        @media (max-width: 768px) { 
-          color: white !important;
-        }
+        font-size: min(max(40px, 2vw), 50px);
       }
       h3 {
         color: black !important;
         font-size: min(max(28px, 2vw), 32px);
-        @media (max-width: 768px) { 
-          color: white !important;
-        }
-      }
-      @media (max-width: 768px) {
-        background-color: #0b0d0ed4;        
       }
     }
 
