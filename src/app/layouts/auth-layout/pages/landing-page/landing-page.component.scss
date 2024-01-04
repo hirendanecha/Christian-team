@@ -17,11 +17,11 @@
 
   .custom-height {
     background-image: url(/assets/images/landingpage/Christian.team-hm-pg.jpg);
-    background-size: cover;
+    background-size: 100% 100%;
+    background-position: center center;
     background-repeat: no-repeat;
     object-fit: cover;
-    height: 100vh;
-    background-position: center;
+    height: calc(100vh - 48px);
 
     .banner-text {
       max-width: 600px;
@@ -31,10 +31,21 @@
       // padding: 40px;
       height: 300px;
       h1 {
-        font-size: min(max(30px, 3vw), 50px);
+        color: black !important;
+        font-size: min(max(40px, 3vw), 50px);
+        @media (max-width: 768px) { 
+          color: white !important;
+        }
       }
       h3 {
-        font-size: min(max(18px, 2vw), 32px);
+        color: black !important;
+        font-size: min(max(28px, 2vw), 32px);
+        @media (max-width: 768px) { 
+          color: white !important;
+        }
+      }
+      @media (max-width: 768px) {
+        background-color: #0b0d0ed4;        
       }
     }
 
@@ -302,6 +313,6 @@
 }
 ::ng-deep.c-button-landing {
   svg path {
-    fill: #000428;
+    fill: var(--primary-color);
   }
 }
