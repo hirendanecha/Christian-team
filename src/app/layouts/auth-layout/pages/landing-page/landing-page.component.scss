@@ -23,6 +23,11 @@
     object-fit: cover;
     height: calc(100vh - 48px);
 
+    // @media(max-width:750px){
+    //   background-size: cover;
+    //   background-position: 70%;
+    // }
+
     .banner-text {
       max-width: 600px;
       width: 100%;
@@ -32,7 +37,7 @@
       height: 300px;
       h1 {
         color: black !important;
-        font-size: min(max(40px, 2vw), 50px);
+        font-size: min(max(32px, 2vw), 50px);
       }
       h3 {
         color: black !important;
