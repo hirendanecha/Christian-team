@@ -76,7 +76,7 @@ export class SharedService {
 
           if (data) {
             this.userData = data;
-            // localStorage.setItem('userData', JSON.stringify(this.userData));
+            localStorage.setItem('userData', JSON.stringify(this.userData));
           }
         },
         error: (error) => {
