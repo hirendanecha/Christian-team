@@ -197,12 +197,12 @@ export class HealingPractitionerRegistrationComponent implements OnInit {
   }
 
   nextPageSearch() {
-    if (this.selectedCards.length > 0) {
+    if (this.selectedCountry) {
       const practitionerRequirements = {
-        selectedCard: this.selectedCards,
         selectedCountry: this.selectedCountry,
         selectedState: this.selectedState,
-        selectedAreas: this.selectedAreaValues
+        // selectedCard: this.selectedCards,
+        // selectedAreas: this.selectedAreaValues
       };
       this.router.navigate(['/my-church'], { state: { data: practitionerRequirements } });
     } else if (this.isWorldwideChecked && this.selectedCards.length <= 0) {

@@ -71,6 +71,8 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
     logoImg: new FormControl('', Validators.required),
     coverImg: new FormControl('', Validators.required),
   });
+  // Email: new FormControl('', [Validators.required]),
+  // MobileNo: new FormControl('', [Validators.required]),
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -106,6 +108,8 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
         logoImg: this.data?.logoImg,
         coverImg: this.data?.coverImg,
       });
+      // MobileNo: this.data?.MobileNo,
+      // Email: this.data?.Email,
       this.communityForm.get('State').enable();
       this.communityForm.get('City').enable();
       this.communityForm.get('County').enable();
@@ -172,10 +176,10 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
     if (!this.data.Id) {
       this.spinner.show();
       const formData = this.communityForm.value;
-      formData['emphasis'] = this.selectedValues;
-      formData['areas'] = this.selectedAreaValues;
+      // formData['emphasis'] = this.selectedValues;
+      // formData['areas'] = this.selectedAreaValues;
       if (this.communityForm.valid) {
-        this.communityService.createCommunity(formData).subscribe({
+        this.communityService.createCommunity(this.communityForm.value).subscribe({
           next: (res: any) => {
             this.spinner.hide();
             if (!res.error) {
@@ -349,6 +353,7 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
 
   clearForm(){
     this.router.navigate(['/my-church'])
+    this.activeModal.close()
   }
 
   convertToUppercase(event: any) {
