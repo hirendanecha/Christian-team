@@ -72,6 +72,7 @@ export class ResetPasswordComponent {
   }
 
   forgotPasswordSubmit(form: NgForm) {
+    localStorage.setItem('auth-token', this.userAccessToken);
     this.submitted = true;
     if (form.form.invalid) {
       return;
@@ -90,9 +91,10 @@ export class ResetPasswordComponent {
             this.msg = 'New password set successfully!';
             this.type = 'success';
             this.changePassword.reset();
-            setTimeout(() => {
-              this.router.navigate(['/login']);
-            }, 2300);
+            // setTimeout(() => {
+            // }, 2300);
+            localStorage.clear()
+            this.router.navigate(['/login']);
           },
           error:
             (error) => {
