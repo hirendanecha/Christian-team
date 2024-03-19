@@ -87,21 +87,29 @@
       Request Call
     </button> -->
   </div>
+  <div *ngIf="communityDetails?.Email" class="d-flex mt-2">
+    <fa-icon [icon]="['fas', 'envelope']" class="eye-icon"></fa-icon>
+    <span class="ms-1">{{communityDetails?.Email}}</span>
+  </div>
+  <div *ngIf="communityDetails?.MobileNo" class="d-flex mt-2">
+    <fa-icon [icon]="['fas', 'phone']" class="eye-icon"></fa-icon>
+    <span class="ms-1">{{communityDetails?.MobileNo}}</span>
+  </div>
   <div class="d-flex align-items-center">
     <div class="d-flex flex-row align-self-baseline label">
       <fa-icon
         [icon]="['fas', 'location-dot']"
         class="eye-icon font-14-px"
       ></fa-icon>
-      <span class="ms-1">{{communityDetails.address}}</span>
+      <span class="ms-1">{{communityDetails?.address}}</span>
     </div>
   </div>
   <div class="d-flex mt-2">
     <fa-icon [icon]="['fas', 'globe']" class="eye-icon"></fa-icon>
     <span class="ms-1"
-      >{{ communityDetails.Country }},{{ communityDetails.State }},{{
-        communityDetails.County
-      }},{{ communityDetails.City }}</span
+      >{{ communityDetails?.Country }},{{ communityDetails?.State }},{{
+        communityDetails?.County
+      }},{{ communityDetails?.City }}</span
     >
   </div>
 </div>

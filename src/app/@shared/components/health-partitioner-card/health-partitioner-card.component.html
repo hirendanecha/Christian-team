@@ -14,14 +14,14 @@
               onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';" alt="avatar" /> -->
             <button class="btn btn-sm cmn-btn" (click)="goToCommunityDetailPage()">More Details</button>
           </div>
-          <!-- <div class="d-flex mt-2">
+          <div *ngIf="community?.Email" class="d-flex mt-2">
             <fa-icon [icon]="['fas', 'envelope']" class="eye-icon"></fa-icon>
             <span class="ms-1">{{community.Email}}</span>
           </div>
-          <div class="d-flex mt-2">
+          <div *ngIf="community?.MobileNo" class="d-flex mt-2">
             <fa-icon [icon]="['fas', 'phone']" class="eye-icon"></fa-icon>
             <span class="ms-1">{{community.MobileNo}}</span>
-          </div> -->
+          </div>
           <div class="d-flex mt-2">
             <fa-icon [icon]="['fas', 'location-dot']" class="eye-icon"></fa-icon>
             <span class="ms-1">{{community.address}}</span>

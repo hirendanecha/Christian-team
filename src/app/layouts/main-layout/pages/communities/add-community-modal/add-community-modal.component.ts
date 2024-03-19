@@ -70,9 +70,9 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
     County: new FormControl('', Validators.required),
     logoImg: new FormControl('', Validators.required),
     coverImg: new FormControl('', Validators.required),
+    Email: new FormControl('', [Validators.required]),
+    MobileNo: new FormControl('', [Validators.required]),
   });
-  // Email: new FormControl('', [Validators.required]),
-  // MobileNo: new FormControl('', [Validators.required]),
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -107,9 +107,9 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
         County: this.data?.County,
         logoImg: this.data?.logoImg,
         coverImg: this.data?.coverImg,
+        MobileNo: this.data?.MobileNo,
+        Email: this.data?.Email,
       });
-      // MobileNo: this.data?.MobileNo,
-      // Email: this.data?.Email,
       this.communityForm.get('State').enable();
       this.communityForm.get('City').enable();
       this.communityForm.get('County').enable();
