@@ -95,7 +95,7 @@ export class LeftSidebarComponent implements OnInit {
 
   notificationNavigation() {
     this.closeSidebar();
-    this.originalFavicon.href = '/assets/images/default-profile.jpg';
+    this.originalFavicon.href = '/assets/images/avtar/placeholder-user.png';
     if (this.isRead === 'N') {
       localStorage.setItem('isRead', 'Y');
       this.sharedService.isNotify = false;
