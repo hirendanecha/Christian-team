@@ -71,7 +71,7 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
     logoImg: new FormControl('', Validators.required),
     coverImg: new FormControl('', Validators.required),
     Email: new FormControl('', [Validators.required]),
-    MobileNo: new FormControl('', [Validators.required]),
+    MobileNo: new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$')]),
   });
 
   constructor(
@@ -103,7 +103,7 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
         Zip: this.data?.Zip,
         State: this.data?.State,
         City: this.data?.City,
-        address: this.data?.City,
+        address: this.data?.address,
         County: this.data?.County,
         logoImg: this.data?.logoImg,
         coverImg: this.data?.coverImg,
@@ -180,25 +180,25 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
       // formData['areas'] = this.selectedAreaValues;
       if (this.communityForm.valid) {
         this.communityService.createCommunity(this.communityForm.value).subscribe({
-          next: (res: any) => {
-            this.spinner.hide();
-            if (!res.error) {
-              this.submitted = true;
-              this.createCommunityAdmin(res.data);
-              this.toastService.success(
-                'Your My Church will be approved within 24 hours!'
+            next: (res: any) => {
+              this.spinner.hide();
+              if (!res.error) {
+                this.submitted = true;
+                this.createCommunityAdmin(res.data);
+                this.toastService.success(
+                  'Your My Church will be approved within 24 hours!'
+                );
+                this.activeModal.close('success');
+                this.router.navigate(['/my-church']);
+              }
+            },
+            error: (err) => {
+              this.toastService.danger(
+                'Please change church. this church name already in use.'
               );
-              this.activeModal.close('success');
-              this.router.navigate(['/my-church']);
-            }
-          },
-          error: (err) => {
-            this.toastService.danger(
-              'Please change church. this church name already in use.'
-            );
-            this.spinner.hide();
-          },
-        });
+              this.spinner.hide();
+            },
+          });
       } else {
         this.spinner.hide();
         this.toastService.danger('Please enter mandatory fields(*) data.');
@@ -213,9 +213,7 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
             if (!res.error) {
               this.submitted = true;
               // this.createCommunityAdmin(res.data);
-              this.toastService.success(
-                'Your My Church edit successfully!'
-              );
+              this.toastService.success('Your My Church edit successfully!');
               this.activeModal.close('success');
             }
           },
@@ -226,6 +224,8 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
             this.spinner.hide();
           },
         });
+    } else {
+      this.toastService.danger('Please enter mandatory fields(*) data.');
     }
   }
 
@@ -351,14 +351,14 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
     }
   }
 
-  clearForm(){
-    this.router.navigate(['/my-church'])
-    this.activeModal.close()
+  clearForm() {
+    this.router.navigate(['/my-church']);
+    this.activeModal.close();
   }
 
   convertToUppercase(event: any) {
     const inputElement = event.target as HTMLInputElement;
-    let inputValue = inputElement.value;   
+    let inputValue = inputElement.value;
     inputValue = inputValue.replace(/\s/g, '');
     inputElement.value = inputValue.toUpperCase();
   }
