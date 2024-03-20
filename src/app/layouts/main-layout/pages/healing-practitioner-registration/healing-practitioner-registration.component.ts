@@ -130,7 +130,7 @@ export class HealingPractitionerRegistrationComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllCountries();
-    this.getCategories();
+    // this.getCategories();
   }
 
   updateCheckbox(selectedOption: 'country' | 'worldwide') {
