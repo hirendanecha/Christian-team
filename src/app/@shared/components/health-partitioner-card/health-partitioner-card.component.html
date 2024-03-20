@@ -12,7 +12,19 @@
           <div class="avatar-area d-flex align-items-center gap-3">
             <!-- <img loading="lazy" class="w-48-px h-48-px rounded-3 shadow-none" data-src="{{ community?.logoImg }}"
               onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';" alt="avatar" /> -->
-            <button class="btn btn-sm cmn-btn">Request Call</button>
+            <button class="btn btn-sm cmn-btn" (click)="goToCommunityDetailPage()">More Details</button>
+          </div>
+          <div *ngIf="community?.Email" class="d-flex mt-2">
+            <fa-icon [icon]="['fas', 'envelope']" class="eye-icon"></fa-icon>
+            <span class="ms-1">{{community.Email}}</span>
+          </div>
+          <div *ngIf="community?.MobileNo" class="d-flex mt-2">
+            <fa-icon [icon]="['fas', 'phone']" class="eye-icon"></fa-icon>
+            <span class="ms-1">{{community.MobileNo}}</span>
+          </div>
+          <div class="d-flex mt-2">
+            <fa-icon [icon]="['fas', 'location-dot']" class="eye-icon"></fa-icon>
+            <span class="ms-1">{{community.address}}</span>
           </div>
           <div class="d-flex mt-2">
             <fa-icon [icon]="['fas', 'globe']" class="eye-icon"></fa-icon>
@@ -21,7 +33,7 @@
         </div>
       </div>
     </div>
-    <div class="d-flex mt-2 align-items-center">
+    <!-- <div class="d-flex mt-2 align-items-center">
       <div class="d-flex flex-row align-items-center label">
         <fa-icon [icon]="['fas', 'circle']" class="eye-icon font-14-px"></fa-icon>
         <span class="ms-1">Emphasis of Christian:</span>
@@ -42,7 +54,7 @@
           {{item.name}}
         </div>
       </div>
-    </div>
+    </div> -->
 
 
   </div>

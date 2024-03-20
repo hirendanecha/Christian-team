@@ -27,7 +27,7 @@ export class CommunitiesComponent {
     private router: Router
   ) {
     this.profileId = Number(localStorage.getItem('profileId'));
-    console.log(history.state.data)
+    // console.log(history.state.data)
     if (history.state.data) {
       const data = history.state.data
       this.getAllCommunities(data);
