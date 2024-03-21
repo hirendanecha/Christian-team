@@ -47,6 +47,11 @@ export class MainLayoutComponent {
     ).subscribe((data: any) => {
       this.sidebar = data;
     });
+    this.breakpointService.screen.subscribe((res) => {
+      if (res.xl.between || res.xl.lessThen) {
+        this.sidebar.isShowRightSideBar = false;
+      }
+    });
   }
 
   openLeftSidebar() {

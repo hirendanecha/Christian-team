@@ -78,9 +78,9 @@ export class HealthPraatitionerCardComponent {
       );
     }
 
-    modalRef.componentInstance.title = `${actionType} ${this.community.pageType}`;
+    modalRef.componentInstance.title = `${actionType} ${this.community.pageType === 'community'  ? 'Church' : 'Topics'}`;
     modalRef.componentInstance.confirmButtonLabel = actionType;
-    modalRef.componentInstance.message = `Are you sure want to ${actionType.toLowerCase()} this ${this.community.pageType
+    modalRef.componentInstance.message = `Are you sure want to ${actionType.toLowerCase()} this ${this.community.pageType === 'community'  ? 'Church' : 'Topics'
       }?`;
 
     modalRef.result.then((res) => {

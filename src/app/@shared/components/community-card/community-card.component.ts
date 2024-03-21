@@ -74,16 +74,16 @@ export class CommunityCardComponent {
       actionObs = this.communityService.removeFromCommunity(this.community?.Id, this.profileId);
     }
 
-    modalRef.componentInstance.title = `${actionType} ${this.community.pageType}`;
+    modalRef.componentInstance.title = `${actionType} ${this.community.pageType === 'community'  ? 'Church' : 'Topics'}`;
     modalRef.componentInstance.confirmButtonLabel = actionType;
-    modalRef.componentInstance.message = `Are you sure want to ${actionType.toLowerCase()} this ${this.community.pageType}?`;
+    modalRef.componentInstance.message = `Are you sure want to ${actionType.toLowerCase()} this ${this.community.pageType === 'community'  ? 'Church' : 'Topics'}?`;
 
     modalRef.result.then((res) => {
       if (res === 'success') {
         actionObs.subscribe({
           next: (res: any) => {
             if (res) {
-              this.toastService.success(`${this.community?.pageType} ${res.message} `);
+              this.toastService.success(`${this.community?.pageType === 'community'  ? 'Church' : 'Topics'} ${res.message} `);
               this.getCommunities?.emit();
             }
           },

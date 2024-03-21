@@ -38,7 +38,7 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
   selectedFile: File;
   userId = '';
   profileId = '';
-  originUrl = environment.webUrl + 'health-practitioner/';
+  originUrl = environment.webUrl + 'church/';
   logoImg: any = {
     file: null,
     url: '',
@@ -352,8 +352,11 @@ export class AddCommunityModalComponent implements OnInit, AfterViewInit {
   }
 
   clearForm() {
-    this.router.navigate(['/my-church']);
-    this.activeModal.close();
+    if (this.data.Id) {
+      this.activeModal.close();
+    } else {
+      this.router.navigate(['/my-church']);
+    }
   }
 
   convertToUppercase(event: any) {

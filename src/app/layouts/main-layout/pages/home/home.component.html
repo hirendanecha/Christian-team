@@ -296,13 +296,13 @@
               <button ngbDropdownItem *ngIf="member?.isAdmin === 'Y'">
                 <a class="droplist d-flex align-items-center gap-2" (click)="createCommunityAdmin(member)">
                   <fa-icon [icon]="['fas', 'user-check']" />
-                  <span>Make {{ this.communityDetails.pageType }} member</span>
+                  <span>Make {{ this.communityDetails.pageType === 'community'  ? 'Church' : 'Topics'}} member</span>
                 </a>
               </button>
               <button ngbDropdownItem *ngIf="member?.isAdmin === 'N'">
                 <a class="droplist d-flex align-items-center gap-2" (click)="createCommunityAdmin(member)">
                   <fa-icon [icon]="['fas', 'user-check']" />
-                  <span>Make {{ this.communityDetails.pageType }} admin</span>
+                  <span>Make {{ this.communityDetails.pageType === 'community'  ? 'Church' : 'Topics'}} admin</span>
                 </a>
               </button>
               <button ngbDropdownItem>
