@@ -129,7 +129,7 @@ export class ViewProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getPdfs(): void {
-    this.postService.getPdfsFile(this.customer.Id).subscribe(
+    this.postService.getPdfsFile(this.customer.profileId).subscribe(
       {
         next: (res: any) => {
           this.spinner.hide();
