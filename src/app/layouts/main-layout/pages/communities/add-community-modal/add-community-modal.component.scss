@@ -2,7 +2,10 @@
   background-color: var(--section-1st-color);
   padding: 25px;
   border-radius: 15px;
-
+  
+  h5{
+    text-transform: none;
+  }
   .form-dark {
     label {
       color: var(--heading-1st-color) !important;

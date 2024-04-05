@@ -84,6 +84,7 @@ import {
   faCross,
   faLocationDot,
   faEnvelope,
+  faRefresh,
 
 } from '@fortawesome/free-solid-svg-icons';
 import { ClaimTokenModalComponent } from './modals/clai-1776-token-modal/claim-token-modal.component';
@@ -230,6 +231,7 @@ export class SharedModule {
       faCross,
       faLocationDot,
       faEnvelope,
+      faRefresh
     );
   }
 }
