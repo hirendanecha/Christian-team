@@ -17,13 +17,13 @@ const routes: Routes = [
   {
     path: 'my-church/details/:name',
     component: HomeComponent,
-    canActivate: mapToCanActivate([AuthenticationGuard]),
+    // canActivate: mapToCanActivate([AuthenticationGuard]),
    
   },
   {
     path: 'pages/:name',
     component: HomeComponent,
-    canActivate: mapToCanActivate([AuthenticationGuard]),
+    // canActivate: mapToCanActivate([AuthenticationGuard]),
   },
   {
     path: 'post/:id',
