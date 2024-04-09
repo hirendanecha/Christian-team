@@ -93,10 +93,15 @@ export class HeaderComponent {
   }
 
   openProfileMobileMenuModal(): void {
+    if(this.tokenService.getCredentials()){
     this.offcanvasService.open(ProfileMenusModalComponent, {
       position: 'start',
       panelClass: 'w-300-px',
     });
+  }
+  else{
+    this.openRightSidebar();
+  }
   }
 
   openNotificationsMobileModal(): void {
