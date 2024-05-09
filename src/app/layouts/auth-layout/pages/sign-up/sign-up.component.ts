@@ -71,7 +71,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     private seoService: SeoService
   ) {
     const data = {
-      title: 'ChristianTube Registration',
+      title: 'Christian.tube Registration',
       url: `${environment.webUrl}sign-up`,
       description: 'Registration page',
       image: `${environment.webUrl}assets/images/landingpage/placeholder-user.png`,

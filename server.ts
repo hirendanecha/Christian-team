@@ -84,7 +84,7 @@ export function app(): express.Express {
         }
         const params = req.params[0];
         var seo: any = {
-          title: 'Christian Team',
+          title: 'Christian.team',
           description:
             'The Christian Social platform to unite Christian worldwide',
           image:
