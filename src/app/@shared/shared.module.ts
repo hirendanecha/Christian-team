@@ -86,6 +86,7 @@ import {
   faEnvelope,
   faRefresh,
   faEyeSlash,
+  faSquarePlus,
 
 } from '@fortawesome/free-solid-svg-icons';
 import { ClaimTokenModalComponent } from './modals/clai-1776-token-modal/claim-token-modal.component';
@@ -111,6 +112,8 @@ import { SharePostModalComponent } from './modals/share-post-modal/share-post-mo
 import { RePostCardComponent } from './components/re-post-card/re-post-card.component';
 import { EditPostModalComponent } from './modals/edit-post-modal/edit-post-modal.component';
 import { HealthPraatitionerCardComponent } from './components/health-partitioner-card/health-partitioner-card.component';
+import { AppointmentCallComponent } from './modals/appointment-call/appointment-call.component';
+import { ConferenceLinkComponent } from './modals/create-conference-link/conference-link-modal.component';
 
 const sharedComponents = [
   ConfirmationModalComponent,
@@ -136,6 +139,8 @@ const sharedComponents = [
   RePostCardComponent,
   EditPostModalComponent,
   HealthPraatitionerCardComponent,
+  AppointmentCallComponent,
+  ConferenceLinkComponent
 ];
 
 const sharedModules = [
@@ -234,6 +239,7 @@ export class SharedModule {
       faEnvelope,
       faRefresh,
       faEyeSlash,
+      faSquarePlus
     );
   }
 }
