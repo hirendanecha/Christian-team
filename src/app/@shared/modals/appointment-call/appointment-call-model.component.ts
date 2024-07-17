@@ -5,22 +5,22 @@ import { ActivatedRoute, Router } from '@angular/router';
 declare var JitsiMeetExternalAPI: any;
 
 @Component({
-  selector: 'app-appointment-call',
-  templateUrl: './appointment-call.component.html',
-  styleUrls: ['./appointment-call.component.scss'],
+  selector: 'app-appointment-call-model',
+  templateUrl: './appointment-call-model.component.html',
+  styleUrls: ['./appointment-call-model.component.scss'],
 })
-export class AppointmentCallComponent implements OnInit {
+export class AppointmentCallModelComponent implements OnInit {
   appointmentCall: SafeResourceUrl;
-  domain: string = 'facetime.tube';
+  domain: string = 'meet.facetime.tube';
   options: any;
   api: any;
 
   constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private router: Router) { }
   ngOnInit(): void {
-    const appointmentURLCall = this.route.snapshot['_routerState'].url.split('/appointment-call/')[1];
+    const appointmentURLCall = this.route.snapshot['_routerState'].url.split('/call/')[1];
     console.log(appointmentURLCall);
     this.appointmentCall = this.sanitizer.bypassSecurityTrustResourceUrl(
-    'https://facetime.tube/' + appointmentURLCall
+    'https://meet.facetime.tube/' + appointmentURLCall
   );
     this.options = {
       roomName: appointmentURLCall,

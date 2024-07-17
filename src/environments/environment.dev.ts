@@ -13,5 +13,8 @@ export const environment = {
   tubeUrl: tubeUrl,
   domain: '.christian.team',
   siteKey:'0x4AAAAAAAUwDv2sJ3UlZCEf',
-  secretKey:'0x4AAAAAAAUwDilFmDq516h-owR9Q0Ew5hk'
+  secretKey:'0x4AAAAAAAUwDilFmDq516h-owR9Q0Ew5hk',
+  EncryptIV: 8625401029409790,
+  EncryptKey: 8625401029409790,
+  qrLink: `${webUrl}settings/edit-profile/`,
 };

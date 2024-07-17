@@ -23,7 +23,7 @@ export class NotificationsComponent {
     private toastService: ToastService,
     private seoService: SeoService,
     private socketService: SocketService
-  ) { 
+  ) {
     const data = {
       title: 'Christian.tube Notification',
       url: `${window.location.href}`,
@@ -70,6 +70,7 @@ export class NotificationsComponent {
         this.toastService.success(
           res.message || 'Notification delete successfully'
         );
+        this.notificationList = [];
         this.getNotificationList();
       },
     });
@@ -78,9 +79,10 @@ export class NotificationsComponent {
   readUnreadNotification(id, isRead): void {
     this.customerService.readUnreadNotification(id, isRead).subscribe({
       next: (res) => {
-        this.toastService.success(res.message); 
+        this.toastService.success(res.message);
+        this.notificationList = [];
         this.getNotificationList();
-      },    
+      },
     });
   }
   loadMoreNotification(): void {

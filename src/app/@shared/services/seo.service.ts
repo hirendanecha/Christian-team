@@ -69,7 +69,7 @@ export class SeoService {
     }
 
     if (!tagValue.image) {
-      tagValue.image = 'https://freedom.buzz/assets/images/banner/Healing-Tube-Logo.png';
+      tagValue.image = 'https://christian.team/assets/images/banner/Healing-Tube-Logo.png';
     }
 
     this.meta.updateTag({

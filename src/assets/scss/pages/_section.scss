@@ -551,7 +551,7 @@
           margin-left: auto;
           justify-content: flex-end;
           .message {
-            background: #00a3ff;
+            background: var(--primary-color);
             border-bottom-right-radius: 0;
           }
           p {
