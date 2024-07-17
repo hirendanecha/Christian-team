@@ -99,6 +99,7 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.getPostList();
+    this.getadvertizements();
   }
 
   getPostList(): void {
@@ -263,5 +264,16 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
         },
       });
     }
+  }
+
+  getadvertizements(): void {
+    this.postService.getAdvertisement().subscribe({
+      next: (res: any) => {
+        this.advertisementDataList = res;
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 }
