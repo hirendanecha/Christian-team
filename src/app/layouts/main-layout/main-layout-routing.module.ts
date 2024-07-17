@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes, mapToCanActivate } from '@angular/router';
 import { MainLayoutComponent } from './main-layout.component';
 import { AuthenticationGuard } from 'src/app/@shared/guards/authentication.guard';
-import { AppointmentCallComponent } from 'src/app/@shared/services/components/appointment-call/appointment-call.component';
+import { AppointmentCallComponent } from 'src/app/@shared/components/appointment-call/appointment-call.component';
 
 const routes: Routes = [
   {

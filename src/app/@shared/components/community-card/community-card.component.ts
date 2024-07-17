@@ -15,7 +15,7 @@ export class CommunityCardComponent {
   @Input('community') community: any = {}
   @Input('type') type: string = '';
   @Output('getCommunities') getCommunities: EventEmitter<void> = new EventEmitter<void>();
-
+  
   profileId: number = null;
 
   constructor(
@@ -64,7 +64,6 @@ export class CommunityCardComponent {
 
     let actionType = '';
     let actionObs = null;
-    console.log(type);
     const modalRef = this.modalService.open(ConfirmationModalComponent);
     if (type === 'my') {
       actionType = 'Delete';

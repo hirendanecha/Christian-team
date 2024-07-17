@@ -4,10 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveOffcanvas, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { ProfileChatsListComponent } from 'src/app/layouts/main-layout/pages/profile-chats/profile-chats-list/profile-chats-list.component';
 import { ProfileChatsSidebarComponent } from 'src/app/layouts/main-layout/pages/profile-chats/profile-chats-sidebar/profile-chats-sidebar.component';
-import { SharedService } from '../../shared.service';
-import { MessageService } from '../../message.service';
-import { SeoService } from '../../seo.service';
-import { TokenStorageService } from '../../token-storage.service';
+import { SharedService } from '../../services/shared.service';
+import { MessageService } from '../../services/message.service';
+import { SeoService } from '../../services/seo.service';
+import { TokenStorageService } from '../../services/token-storage.service';
 
 declare var JitsiMeetExternalAPI: any;
 @Component({

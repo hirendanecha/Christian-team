@@ -41,6 +41,7 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
   userId: number = null
   unSubscribeProfileIds: any = [];
 
+  advertisementDataList: any[] = [];
 
   constructor(
     private spinner: NgxSpinnerService,
@@ -52,9 +53,7 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
     private unsubscribeProfileService: UnsubscribeProfileService,
 
   ) {
-    // console.log(this.route.snapshot.params.id)
     this.userId = this.route.snapshot.params.id;
-    console.log('userid==>', this.userId)
     this.profileId = localStorage.getItem('profileId');
     this.getUnsubscribeProfiles();
 
@@ -71,9 +70,7 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
         if (res[0]) {
           if (((this.communityId === null && res[0].communityId === null) || (this.communityId === res[0].communityId)) && !this.userId) {
             if (!this.unSubscribeProfileIds.includes(res[0]?.profileid)) {
-              console.log('new-post-data', res)
               if (this.editPostIndex >= 0 && this.editPostIndex != null) {
-                console.log(this.editPostIndex, 'index')
                 this.postList[this.editPostIndex] = res[0];
                 this.editPostIndex = null;
               } else {
@@ -89,8 +86,6 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
                 // this.getPostList();
               }
             }
-          } else {
-            console.log('enter', res[0]);
           }
         }
       },
@@ -251,7 +246,6 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   onEditPostData(post: any, index: number): void {
-    console.log(index);
     this.editPostIndex = index;
     this.onEditPost?.emit(post);
   }

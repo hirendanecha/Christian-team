@@ -6,13 +6,10 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { RouterModule } from '@angular/router';
 import { PostListComponent } from './components/post-list/post-list.component';
 import { PostCardComponent } from './components/post-card/post-card.component';
-import { ImgPickerComponent } from './components/img-picker/img-picker.component';
 import { CommunityCardComponent } from './components/community-card/community-card.component';
 import { RightSidebarComponent } from '../layouts/main-layout/components/right-sidebar/right-sidebar.component';
-import { PostMetaDataCardComponent } from './components/post-meta-data-card/post-meta-data-card.component';
 import { NgxTrimDirectiveModule } from 'ngx-trim-directive';
 import { TagUserInputComponent } from './components/tag-user-input/tag-user-input.component';
-import { ImgPreviewComponent } from './components/img-preview/img-preview.component';
 import { InlineLoaderComponent } from './components/inline-loader/inline-loader.component';
 import { LAZYLOAD_IMAGE_HOOKS, ScrollHooks } from 'ng-lazyload-image';
 import { CopyClipboardDirective } from './directives/copy-clipboard.directive';
@@ -136,7 +133,6 @@ import { EditResearchModalComponent } from './modals/edit-research-modal/edit-re
 import { SharePostModalComponent } from './modals/share-post-modal/share-post-modal.component';
 import { RePostCardComponent } from './components/re-post-card/re-post-card.component';
 import { EditPostModalComponent } from './modals/edit-post-modal/edit-post-modal.component';
-import { HealthPraatitionerCardComponent } from './components/health-partitioner-card/health-partitioner-card.component';
 import { ConferenceLinkComponent } from './modals/create-conference-link/conference-link-modal.component';
 import { IncomingcallModalComponent } from './modals/incoming-call-modal/incoming-call-modal.component';
 import { OutGoingCallModalComponent } from './modals/outgoing-call-modal/outgoing-call-modal.component';
@@ -147,17 +143,18 @@ import { AppQrModalComponent } from './modals/app-qr-modal/app-qr-modal.componen
 import { MediaGalleryComponent } from './components/media-gallery/media-gallery.component';
 import { GalleryImgPreviewComponent } from './components/gallery-img-preview/gallery-img-preview.component';
 import { QRCodeModule } from 'angularx-qrcode';
+import { ImgPreviewComponent } from './components/img-preview/img-preview.component';
+import { PostMetaDataCardComponent } from './components/post-meta-data-card/post-meta-data-card.component';
+import { ImgPickerComponent } from './components/img-picker/img-picker.component';
+import { HealthPraatitionerCardComponent } from './components/health-partitioner-card/health-partitioner-card.component';
 
 const sharedComponents = [
   ConfirmationModalComponent,
   PostListComponent,
   PostCardComponent,
-  ImgPickerComponent,
   CommunityCardComponent,
   RightSidebarComponent,
-  PostMetaDataCardComponent,
   TagUserInputComponent,
-  ImgPreviewComponent,
   InlineLoaderComponent,
   CopyClipboardDirective,
   ClaimTokenModalComponent,
@@ -171,7 +168,6 @@ const sharedComponents = [
   SharePostModalComponent,
   RePostCardComponent,
   EditPostModalComponent,
-  HealthPraatitionerCardComponent,
   ConferenceLinkComponent,
   IncomingcallModalComponent,
   OutGoingCallModalComponent,
@@ -181,6 +177,10 @@ const sharedComponents = [
   AppQrModalComponent,
   MediaGalleryComponent,
   GalleryImgPreviewComponent,
+  ImgPreviewComponent,
+  PostMetaDataCardComponent,
+  ImgPickerComponent,
+  HealthPraatitionerCardComponent
 ];
 
 const sharedModules = [

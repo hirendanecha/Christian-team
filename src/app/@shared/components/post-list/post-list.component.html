@@ -3,7 +3,7 @@
     <ng-container *ngFor="let post of postList;let i = index">
       <app-post-card [post]="post" [seeFirstList]="seeFirstList" (onEditPost)="onEditPostData(post, i)" (getPostList)="getPostList()" />
     </ng-container>
-
+    
     <!-- <div
       class="col-12 my-5 text-center"
       *ngIf="parentComponent === 'HomeComponent' && postList.length > 9"
