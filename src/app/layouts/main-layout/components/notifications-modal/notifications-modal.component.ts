@@ -8,7 +8,7 @@ import { SocketService } from 'src/app/@shared/services/socket.service';
 @Component({
   selector: 'app-notifications-modal',
   templateUrl: './notifications-modal.component.html',
-  styleUrls: ['./notifications-modal.component.scss'],  
+  styleUrls: ['./notifications-modal.component.scss'],
 })
 export class NotificationsModalComponent implements AfterViewInit {
   originalFavicon: HTMLLinkElement;
@@ -30,14 +30,21 @@ export class NotificationsModalComponent implements AfterViewInit {
     });
   }
 
-  readUnreadNotification(postId: string, notificationId: number): void {
-    this.customerService.readUnreadNotification(notificationId, 'Y').subscribe({
-      next: (res) => {
-        this.router.navigate([`post/${postId}`]);
-        // window.open(`post/${postId}`.toString(), '_blank')
-        this.closeModal();
-      },
-    });
+  readUnreadNotification(postId: string, notification: any = {}): void {
+    this.customerService
+      .readUnreadNotification(notification.id, 'Y')
+      .subscribe({
+        next: (res) => {
+          const type = ['M', 'SC', 'DC', 'VC']
+          if (type.includes(notification?.actionType)) {
+            this.router.navigate([`profile-chats`]);
+          } else {
+            this.router.navigate([`post/${postId}`]);
+          }
+          // window.open(`post/${postId}`.toString(), '_blank')
+          this.closeModal();
+        },
+      });
   }
 
   closeModal(): void {
