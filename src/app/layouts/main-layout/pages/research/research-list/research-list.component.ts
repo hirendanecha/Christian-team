@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbSlideEvent } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BreakpointService } from 'src/app/@shared/services/breakpoint.service';
@@ -66,7 +67,8 @@ export class ResearchListComponent {
     private breakpointService: BreakpointService,
     private toastService: ToastService,
     private seoService: SeoService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private router: Router,
   ) {
     const data = {
       title: 'Christian.tube Research',
@@ -211,6 +213,7 @@ export class ResearchListComponent {
       reqObj['thumbfilename'] = this.postThumbfilename;
       this.socketService?.createOrEditPost(reqObj);
       this.toastService.success('Research added successfully.');
+      this.router.navigate(['/home']);
       this.resetPost();
       // this.postService
       //   .createPost(reqObj)
