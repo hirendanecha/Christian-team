@@ -72,7 +72,7 @@ export class ResearchListComponent {
   ) {
     const data = {
       title: 'Christian.tube Research',
-      url: `${window.location.href}`,
+      url: `${location.href}`,
       description: '',
     };
     this.seoService.updateSeoMetaData(data);
