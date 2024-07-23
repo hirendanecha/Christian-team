@@ -197,6 +197,7 @@ export class AddFreedomPageComponent implements OnInit, AfterViewInit {
               this.spinner.hide();
               if (!res.error) {
                 this.submitted = true;
+                this.createAdvertizeMentLink(res.data);
                 this.createCommunityAdmin(res.data);
                 this.activeModal.close('success');
                 this.toastService.success('Christian Topic created successfully');

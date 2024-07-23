@@ -142,21 +142,21 @@ export class SharedService {
       this.advertizementLink = null;
     }
   }
-
   getMetaDataFromUrlStr(url): void {
     this.postService.getMetaData({ url }).subscribe({
       next: (res: any) => {
-        const meta = res?.meta;
-        const urls = meta?.image?.url;
-        const imgUrl = Array.isArray(urls) ? urls?.[0] : urls;
-        const linkMetaData = {
-          title: meta?.title,
-          metadescription: meta?.description,
-          metaimage: imgUrl,
-          metalink: meta?.url || url,
-          url: url,
-        };
-        this.advertizementLink?.push(linkMetaData);
+        if (res?.meta?.image) {
+          const urls = res.meta?.image?.url;
+          const imgUrl = Array.isArray(urls) ? urls?.[0] : urls;
+          const linkMetaData = {
+            title: res?.meta?.title,
+            metadescription: res?.meta?.description,
+            metaimage: imgUrl,
+            metalink: res?.meta?.url || url,
+            url: url,
+          };
+          this.advertizementLink?.push(linkMetaData);
+        }
       },
       error: (err) => {
         console.log(err);

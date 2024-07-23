@@ -129,7 +129,7 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
           if (res?.data.data.length > 0) {
             this.postList = [...this.postList, ...res?.data.data];
           } else {
-            this.hasMoreData = false;
+            this.hasMoreData = true;
           }
         },
         error: (error) => {
@@ -152,7 +152,7 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
           if (res?.data.data.length > 0) {
             this.postList = [...this.postList, ...res?.data.data];
           } else {
-            this.hasMoreData = false;
+            this.hasMoreData = true;
           }
         },
         error: (error) => {
