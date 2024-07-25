@@ -1149,7 +1149,15 @@ export class ProfileChatsListComponent
       ) as HTMLDivElement;
       if (tagUserInput) {
         setTimeout(() => {
-          tagUserInput.innerHTML = tagUserInput.innerHTML.slice(0, -1);
+          tagUserInput.innerText = tagUserInput.innerText + ' '.slice(0, -1);
+          const range = document.createRange();
+          const selection = window.getSelection();
+          if (selection) {
+            range.selectNodeContents(tagUserInput);
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          }
         }, 100);    
       }
     }
