@@ -57,9 +57,7 @@
         </div>
 
         <div class="col-12 col-md-6 mb-3 d-flex flex-column">
-          <label class="form-label"
-            >Profile Picture</label
-          >
+          <label class="form-label">Profile Picture</label>
           <app-img-picker (onFileChange)="selectFiles($event)" />
         </div>
 
@@ -133,7 +131,11 @@
               autocomplete="new-password"
               #passwordInput
             />
-            <fa-icon [icon]="passwordHidden ? ['fas', 'eye'] : ['fas', 'eye-slash']" class="font-20-px position-absolute" (click)="togglePasswordVisibility(passwordInput)"></fa-icon>
+            <fa-icon
+              [icon]="passwordHidden ? ['fas', 'eye'] : ['fas', 'eye-slash']"
+              class="font-20-px position-absolute"
+              (click)="togglePasswordVisibility(passwordInput)"
+            ></fa-icon>
           </div>
           <div
             class="text-danger"
@@ -150,18 +152,28 @@
           <label class="form-label"
             >Confirm Password<span class="text-danger">*</span></label
           >
-          <input
-            type="password"
-            class="input-area"
-            required
-            name="confirmPassword"
-            placeholder="Enter confirm password"
-            (focusout)="validatepassword()"
-            (input)="changetopassword($event)"
-            (keyup)="changetopassword($event)"
-            formControlName="confirm_password"
-            autocomplete="new-password"
-          />
+          <div class="d-flex custom-input-area position-relative">
+            <input
+              type="password"
+              class="input-area"
+              required
+              name="confirmPassword"
+              placeholder="Enter confirm password"
+              (focusout)="validatepassword()"
+              (input)="changetopassword($event)"
+              (keyup)="changetopassword($event)"
+              formControlName="confirm_password"
+              autocomplete="new-password"
+              #confirmPasswordInput
+            />
+            <fa-icon
+              [icon]="
+                confirmPasswordHidden ? ['fas', 'eye'] : ['fas', 'eye-slash']
+              "
+              class="font-20-px position-absolute"
+              (click)="togglePasswordVisibility(confirmPasswordInput)"
+            ></fa-icon>
+          </div>
           <div
             class="text-danger"
             *ngIf="
@@ -175,8 +187,9 @@
 
         <div class="col-12 col-md-6 mb-3">
           <label class="form-label"
-            >Mobile<span class="text-danger">*</span></label
-          >
+            >Mobile
+            <!-- <span class="text-danger">*</span> -->
+          </label>
           <input
             type="number"
             class="input-area"
@@ -184,7 +197,7 @@
             placeholder="Enter your mobile number"
             formControlName="MobileNo"
           />
-          <div
+          <!-- <div
             class="text-danger"
             *ngIf="
               registerForm.get('MobileNo').hasError('required') &&
@@ -192,7 +205,7 @@
             "
           >
             Mobile number is required.
-          </div>
+          </div> -->
         </div>
 
         <div class="col-12 col-md-6 mb-3">
@@ -247,58 +260,62 @@
             >State<span class="text-danger">*</span></label
           >
           <select
-          id="State"
-          required
-          name="State"
-          class="input-area w-100"
-          formControlName="State"
-        >
-          <option
-            *ngFor="let item of allStateData"
+            id="State"
+            required
+            name="State"
+            class="input-area w-100"
+            formControlName="State"
           >
-            {{ item.state }}
-          </option>
-        </select>
+            <option *ngFor="let item of allStateData">
+              {{ item.state }}
+            </option>
+          </select>
         </div>
 
         <div class="col-12 col-md-6 mb-3">
           <label class="form-label"
-            >City<span class="text-danger">*</span></label
-          >
+            >City
+            <!-- <span class="text-danger">*</span> -->
+          </label>
           <input
             type="text"
             class="input-area"
-            required
             name="City"
             placeholder="Enter your city"
             formControlName="City"
           />
-          <div class="text-danger" *ngIf="
+          <!-- <div
+            class="text-danger"
+            *ngIf="
               registerForm.get('City').hasError('required') &&
               registerForm.get('City').touched
-            ">
+            "
+          >
             City is required.
-          </div>
+          </div> -->
         </div>
 
         <div class="col-12 col-md-6 mb-3">
           <label class="form-label"
-            >County<span class="text-danger">*</span></label
-          >
+            >County
+            <!-- <span class="text-danger">*</span> -->
+          </label>
           <input
             type="text"
             class="input-area"
-            required
             name="County"
             placeholder="Enter your County"
             formControlName="County"
           />
-          <div class="text-danger" *ngIf="
+          <!-- <div
+            class="text-danger"
+            *ngIf="
               registerForm.get('County').hasError('required') &&
               registerForm.get('County').touched
-            ">
+            "
+          >
             County is required.
-          </div>
+          </div> -->
         </div>
       </div>
 
@@ -307,7 +324,12 @@
       </div>
 
       <div class="form-check ps-0 my-4 d-flex">
-        <input type="checkbox" class="p-0" formControlName="TermAndPolicy" />
+        <input
+          type="checkbox"
+          class="p-0"
+          required
+          formControlName="TermAndPolicy"
+        />
         <label class="form-check-label ms-2">
           I agree to the <a>Terms</a> and <a>Privacy Policy</a>.
           <span class="text-danger">*</span>
