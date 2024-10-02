@@ -25,7 +25,7 @@
     .hover-box-container {
       min-width: 267px;
       min-height: 125px;
-      z-index: 2;
+      z-index: 4;
       background: var(--body-color);
       border-radius: 15px;
       padding: 10px 10px;
@@ -353,14 +353,14 @@
       margin-top: 24px;
     }
   }
-  
-  .custom-width-comment{
-   .file-custom{
-    @media (max-width: 575px) {
-    position: relative;
-    right: 50px;
+
+  .custom-width-comment {
+    .file-custom {
+      @media (max-width: 575px) {
+        position: relative;
+        right: 50px;
+      }
     }
-   } 
   }
   .custom-width-comment ::ng-deep app-tag-user-input {
     .tag-input-div {
@@ -500,4 +500,14 @@
     display: unset !important;
     width: 70px;
   }
+}
+
+.hover-directive-box-container {
+  min-width: 267px;
+  min-height: 125px;
+  z-index: 3;
+  background: var(--body-color);
+  border-radius: 15px;
+  padding: 10px 10px;
+  margin: 5px 40px 40px 0px;
 }

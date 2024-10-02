@@ -27,6 +27,7 @@ import { UnsubscribeProfileService } from '../../services/unsubscribe-profile.se
 export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
   @Input('parentComponent') parentComponent: string = '';
   // @Input('id') userId: number = null;
+  @Input('searchText') searchText: string = null;
   @Input('communityId') communityId: number = null;
   @Output('onEditPost') onEditPost: EventEmitter<any> = new EventEmitter<any>();
 
@@ -38,7 +39,7 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
   editPostIndex: number = null;
   isLoading = false;
   hasMoreData = false;
-  userId: number = null
+  userId: number = null;
   unSubscribeProfileIds: any = [];
 
   advertisementDataList: any[] = [];
@@ -50,13 +51,11 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
     private socketService: SocketService,
     private seeFirstUserService: SeeFirstUserService,
     private route: ActivatedRoute,
-    private unsubscribeProfileService: UnsubscribeProfileService,
-
+    private unsubscribeProfileService: UnsubscribeProfileService
   ) {
     this.userId = this.route.snapshot.params.id;
     this.profileId = localStorage.getItem('profileId');
     this.getUnsubscribeProfiles();
-
   }
 
   ngAfterViewInit(): void {
@@ -68,7 +67,11 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
       'new-post-added',
       (res: any) => {
         if (res[0]) {
-          if (((this.communityId === null && res[0].communityId === null) || (this.communityId === res[0].communityId)) && !this.userId) {
+          if (
+            ((this.communityId === null && res[0].communityId === null) ||
+              this.communityId === res[0].communityId) &&
+            !this.userId
+          ) {
             if (!this.unSubscribeProfileIds.includes(res[0]?.profileid)) {
               if (this.editPostIndex >= 0 && this.editPostIndex != null) {
                 this.postList[this.editPostIndex] = res[0];
@@ -78,9 +81,8 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
                   (obj) => obj?.id === res[0]?.id
                 );
                 if (this.postList[index]) {
-                  this.postList[index] = res[0]
-                }
-                else {
+                  this.postList[index] = res[0];
+                } else {
                   this.postList.unshift(res[0]);
                 }
                 // this.getPostList();
@@ -95,11 +97,12 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
     );
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     this.getPostList();
     this.getadvertizements();
+    console.log(this.searchText);
   }
 
   getPostList(): void {
@@ -121,7 +124,8 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
         page: this.activePage,
         size: 10,
         profileId: this.userId,
-      }
+        searchText: this.searchText,
+      };
       this.postService.getPostsByProfileId(data).subscribe({
         next: (res: any) => {
           this.isPostLoader = false;
@@ -144,7 +148,7 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
         page: this.activePage,
         size: 10,
         profileId: this.profileId,
-      }
+      };
       this.postService.getPostsByProfileId(data).subscribe({
         next: (res: any) => {
           this.isPostLoader = false;
@@ -257,7 +261,7 @@ export class PostListComponent implements OnInit, OnChanges, AfterViewInit {
     if (profileId > 0) {
       this.unsubscribeProfileService.getByProfileId(profileId).subscribe({
         next: (res: any) => {
-          res.map(ele => {
+          res.map((ele) => {
             this.unSubscribeProfileIds.push(ele.profileId);
           });
           // this.unSubscribeProfileIds = res?.length > 0 ? res : [];

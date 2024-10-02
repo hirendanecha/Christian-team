@@ -109,7 +109,8 @@ import {
   faPhoneVolume,
   faCircleChevronUp,
   faCircleChevronDown,
-
+  faSignIn,
+  faSignOut,
 } from '@fortawesome/free-solid-svg-icons';
 import { ClaimTokenModalComponent } from './modals/clai-1776-token-modal/claim-token-modal.component';
 import { WalletLinkComponent } from './modals/wallet-download-modal/1776-wallet.component';
@@ -147,6 +148,8 @@ import { ImgPreviewComponent } from './components/img-preview/img-preview.compon
 import { PostMetaDataCardComponent } from './components/post-meta-data-card/post-meta-data-card.component';
 import { ImgPickerComponent } from './components/img-picker/img-picker.component';
 import { HealthPraatitionerCardComponent } from './components/health-partitioner-card/health-partitioner-card.component';
+import { HoverDropdownDirective } from './directives/hover-dropdown.directive';
+import { ImgLayoutComponent } from './components/img-layout/img-layout.component';
 
 const sharedComponents = [
   ConfirmationModalComponent,
@@ -180,7 +183,9 @@ const sharedComponents = [
   ImgPreviewComponent,
   PostMetaDataCardComponent,
   ImgPickerComponent,
-  HealthPraatitionerCardComponent
+  HealthPraatitionerCardComponent,
+  HoverDropdownDirective,
+  ImgLayoutComponent,
 ];
 
 const sharedModules = [
@@ -315,7 +320,9 @@ export class SharedModule {
       faLocationDot,
       faRefresh,
       faEyeSlash,
-      faSquarePlus
+      faSquarePlus,
+      faSignIn,
+      faSignOut
     );
   }
 }

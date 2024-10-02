@@ -30,11 +30,11 @@ import { Meta } from '@angular/platform-browser';
 import { isPlatformBrowser } from '@angular/common';
 import { Howl } from 'howler';
 import { EditPostModalComponent } from 'src/app/@shared/modals/edit-post-modal/edit-post-modal.component';
+import { UploadFilesService } from 'src/app/@shared/services/upload-files.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  // providers: [MetafrenzyService]
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   postMessageInputValue: string = '';
@@ -49,6 +49,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     imageUrl: '',
     posttype: 'S',
     pdfUrl: '',
+    imagesList: [],
   };
 
   communitySlug: string;
@@ -64,10 +65,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   memberIds: any = [];
   pdfName: string = '';
   notificationId: number;
-  buttonClicked = false;  
+  buttonClicked = false;
   originalFavicon: HTMLLinkElement;
   notificationSoundOct = '';
-
+  postMediaData: any[] = [];
+  currentImageIndex: number = this.postMediaData.length - 1;
+  currentIndex: any;
+  selectedFiles: any[] = [];
   constructor(
     private modalService: NgbModal,
     private spinner: NgxSpinnerService,
@@ -81,6 +85,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     public tokenService: TokenStorageService,
     private seoService: SeoService,
+    private uploadFilesService: UploadFilesService,
     // private metafrenzyService: MetafrenzyService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -186,29 +191,71 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {}
 
   onPostFileSelect(event: any): void {
-    const file = event.target?.files?.[0] || {};
-    // console.log(file)
-    if (file.type.includes('application/pdf')) {
-      this.postData['file'] = file;
-      this.pdfName = file?.name;
-      this.postData['imageUrl'] = null;
-      this.postData['streamname'] = null;
-    } else {
-      this.postData['file'] = file;
-      this.postData['imageUrl'] = URL.createObjectURL(file);
-      this.pdfName = null;
-      this.postData['pdfUrl'] = null;
+    if (this.postMediaData.length > 3) {
+      this.toastService.warring(
+        'Please choose up to 4 photos, videos, or GIFs.'
+      );
+      return;
     }
-    // if (file?.size < 5120000) {
-    // } else {
-    //   this.toastService.warring('Image is too large!');
-    // }
+    const tagUserInput = document.querySelector(
+      '.home-input app-tag-user-input .tag-input-div'
+    ) as HTMLInputElement;
+    if (tagUserInput) {
+      tagUserInput.focus();
+    }
+    const files = event.target?.files;
+    if (files.length > 4) {
+      this.toastService.warring(
+        'Please choose up to 4 photos, videos, or GIFs.'
+      );
+      return;
+    }
+    let existingFileType = '';
+    if (this.postMediaData.length > 0) {
+      existingFileType = this.postMediaData[0].file.type.split('/')[0];
+    }
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileData: any = {
+        file: file,
+        pdfName: null,
+        imageUrl: null,
+      };
+      const fileType = file.type.split('/')[0];
+      if (existingFileType && fileType !== existingFileType) {
+        this.toastService.warring(
+          'Please select only one type of file at a time.'
+        );
+        return;
+      }
+      if (
+        file.type.includes('application/pdf') ||
+        file.type.includes('application/msword') ||
+        file.type.includes(
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        )
+      ) {
+        fileData.pdfName = file.name;
+      } else if (file.type.includes('image/')) {
+        fileData.imageUrl = URL.createObjectURL(file);
+      }
+      this.selectedFiles.push(fileData);
+      // console.log(`File ${i + 1}:`, fileData);
+    }
+    if (files?.[0]?.type?.includes('application/')) {
+      this.postMediaData = this.selectedFiles;
+    } else {
+      this.postMediaData = (this.postMediaData || []).concat(
+        this.selectedFiles
+      );
+    }
+    // console.log('Selected files:', this.postMediaData);
   }
 
-  removePostSelectedFile(): void {
-    this.postData['file'] = null;
-    this.postData['imageUrl'] = null;
-    this.pdfName = null;
+  removePostSelectedFile(index: number): void {
+    if (index > -1 && index < this.postMediaData.length) {
+      this.postMediaData.splice(index, 1);
+    }
   }
 
   getCommunityDetailsBySlug(): void {
@@ -230,20 +277,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
               description: details.CommunityDescription,
               image: details?.coverImg,
             };
-            // this.metafrenzyService.setTitle(data.title);
-            // this.metafrenzyService.setMetaTag('og:title', data.title);
-            // this.metafrenzyService.setMetaTag('og:description', data.description);
-            // this.metafrenzyService.setMetaTag('og:url', data.url);
-            // this.metafrenzyService.setMetaTag('og:image', data.image);
-            // this.metafrenzyService.setMetaTag("og:site_name", 'Freedom.Buzz');
-            // this.metafrenzyService.setOpenGraph({
-            //   title: data.title,
-            //   //description: post.postToProfileIdName === '' ? post.profileName: post.postToProfileIdName,
-            //   description: data.description,
-            //   url: data.url,
-            //   image: data.image,
-            //   site_name: 'Freedom.Buzz'
-            // });
             this.seoService.updateSeoMetaData(data);
 
             if (details?.memberList?.length > 0) {
@@ -301,71 +334,80 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   uploadPostFileAndCreatePost(): void {
     this.buttonClicked = true;
-    if (this.postData?.postdescription || this.postData?.file?.name) {
-      if (this.postData?.file?.name) {
-        this.spinner.show();
-        this.postService.uploadFile(this.postData?.file).subscribe({
-          next: (res: any) => {
-            // this.spinner.hide();
-            if (res?.body?.url) {
-              if (this.postData?.file.type.includes('application/pdf')) {
+    this.spinner.show();
+    if (this.postData?.editImagesList?.length) {
+      this.postMediaData = this.postMediaData?.concat(
+        this.postData?.editImagesList
+      );
+    }
+    if (this.postData?.postdescription || this.postMediaData?.length) {
+      if (this.postMediaData?.length) {
+        if (this.postMediaData?.[0]?.pdfName) {
+          let media = this.postMediaData?.map((file) => file?.file);
+          this.uploadFilesService.uploadFile(media[0]).subscribe({
+            next: (res: any) => {
+              if (res?.body?.url) {
                 this.postData['pdfUrl'] = res?.body?.url;
-                console.log('pdfUrl', res?.body?.url);
-                this.postData['imageUrl'] = null;
-                this.createOrEditPost();
-              } else {
-                this.postData['file'] = null;
-                this.postData['imageUrl'] = res?.body?.url;
-                this.postData['pdfUrl'] = null;
                 this.createOrEditPost();
               }
-            }
-            // if (this.postData.file?.size < 5120000) {
-            // } else {
-            //   this.toastService.warring('Image is too large!');
-            // }
-          },
-          error: (err) => {
-            this.spinner.hide();
-          },
-        });
+            },
+            error: (err) => {
+              this.spinner.hide();
+            },
+          });
+        } else {
+          let media = this.postMediaData?.map((file) => file?.file);
+          this.postService.uploadFile(media).subscribe({
+            next: (res: any) => {
+              if (res?.body?.imagesList) {
+                this.spinner.hide();
+                // if (this.postData?.file?.type?.includes('application/pdf')) {
+                //   this.postMediaData['pdfUrl'] = res?.body?.url;
+                //   this.postMediaData['imageUrl'] = null;
+                //   this.createOrEditPost();
+                // } else {
+                // this.postMediaData['file'] = null;
+                // this.postData['pdfUrl'] = res?.body?.pdfUrl;
+                if (this.postData['imagesList']?.length) {
+                  for (const media of res?.body?.imagesList) {
+                    this.postData['imagesList'].push(media);
+                  }
+                } else {
+                  this.postData.imagesList = res?.body?.imagesList;
+                }
+                this.createOrEditPost();
+                // }
+              }
+            },
+            error: (err) => {
+              this.spinner.hide();
+            },
+          });
+        }
       } else {
         this.spinner.hide();
         this.createOrEditPost();
       }
+    } else {
+      this.createOrEditPost();
     }
   }
 
   createOrEditPost(): void {
     this.postData.tags = getTagUsersFromAnchorTags(this.postMessageTags);
-    if (
-      this.postData?.postdescription ||
-      this.postData?.imageUrl ||
-      this.postData?.pdfUrl
-    ) {
+    if (this.postData?.postdescription || this.postData?.imagesList) {
       if (!(this.postData?.meta?.metalink || this.postData?.metalink)) {
         this.postData.metalink = null;
         this.postData.title = null;
         this.postData.metaimage = null;
         this.postData.metadescription = null;
-        console.log(this.postData);
-
       }
-      // this.spinner.show();
-      console.log(
-        'postData',
-        this.postData,
-        this.socketService.socket?.connected
-      );
       this.toastService.success('Post created successfully.');
+      console.log(this.postData);
+
       this.socketService?.createOrEditPost(this.postData);
       this.buttonClicked = false;
       this.resetPost();
-      // , (data) => {
-      //   this.spinner.hide();
-      //   console.log(data)
-      //   return data;
-      // });
     }
   }
 
@@ -378,14 +420,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetPost() {
+    this.postMediaData = [];
     this.postData['id'] = '';
     this.postData['postdescription'] = '';
+    this.postData['imagesList'] = '';
     this.postData['meta'] = {};
     this.postData['tags'] = [];
     this.postData['file'] = {};
     this.postData['imageUrl'] = '';
     this.postData['pdfUrl'] = '';
-    this.pdfName = '';
+    this.selectedFiles = [];
     this.postMessageInputValue = ' ';
     setTimeout(() => {
       this.postMessageInputValue = '';
@@ -394,26 +438,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onEditPost(post: any): void {
-      // console.log('edit-post', post)
-      if (post.posttype === 'V') {
-        this.openUploadVideoModal(post);
-      }
-      //  else if (post.pdfUrl) {
-      //   this.pdfName = post.pdfUrl.split('/')[3];
-      //   console.log(this.pdfName);
-      //   this.postData = { ...post };
-      //   this.postMessageInputValue = this.postData?.postdescription;
-      // }
-      else {
-        this.openUploadEditPostModal(post);
-        // this.postData = { ...post };
-        // this.postMessageInputValue = this.postData?.postdescription;
-      }
-      // window.scroll({
-      //   top: 0,
-      //   left: 0,
-      //   behavior: 'smooth',
-      // });
+    if (post.posttype === 'V') {
+      this.openUploadVideoModal(post);
+    } else {
+      this.openUploadEditPostModal(post);
+    }
   }
 
   editCommunity(data): void {
@@ -435,7 +464,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       data.link1 = this.sharedService?.advertizementLink[0]?.url;
       data.link2 = this.sharedService?.advertizementLink[1]?.url;
     }
-    modalRef.componentInstance.title = `Edit ${data.pageType === 'community'  ? 'Church' : 'Topics'} Details`;
+    modalRef.componentInstance.title = `Edit ${
+      data.pageType === 'community' ? 'Church' : 'Topics'
+    } Details`;
     modalRef.componentInstance.cancelButtonLabel = 'Cancel';
     modalRef.componentInstance.confirmButtonLabel = 'Save';
     modalRef.componentInstance.closeIcon = true;
@@ -480,13 +511,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const modalRef = this.modalService.open(ConfirmationModalComponent, {
       centered: true,
     });
-    modalRef.componentInstance.title = `Leave ${this.communityDetails.pageType === 'community'  ? 'Church' : 'Topics'}`;
+    modalRef.componentInstance.title = `Leave ${
+      this.communityDetails.pageType === 'community' ? 'Church' : 'Topics'
+    }`;
     modalRef.componentInstance.confirmButtonLabel = id ? 'Remove' : 'Leave';
     modalRef.componentInstance.cancelButtonLabel = 'Cancel';
     if (id) {
-      modalRef.componentInstance.message = `Are you sure want to remove this member from ${this.communityDetails.pageType === 'community'  ? 'Church' : 'Topics'}?`;
+      modalRef.componentInstance.message = `Are you sure want to remove this member from ${
+        this.communityDetails.pageType === 'community' ? 'Church' : 'Topics'
+      }?`;
     } else {
-      modalRef.componentInstance.message = `Are you sure want to Leave from this ${this.communityDetails.pageType === 'community'  ? 'Church' : 'Topics'}?`;
+      modalRef.componentInstance.message = `Are you sure want to Leave from this ${
+        this.communityDetails.pageType === 'community' ? 'Church' : 'Topics'
+      }?`;
     }
     modalRef.result.then((res) => {
       if (res === 'success') {
@@ -498,7 +535,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
               if (res) {
                 this.toastService.success(res.message);
                 this.getCommunityDetailsBySlug();
-                if(this.buttonClicked){
+                if (this.buttonClicked) {
                   this.buttonClicked = false;
                 }
               }
@@ -516,10 +553,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const modalRef = this.modalService.open(ConfirmationModalComponent, {
       centered: true,
     });
-    modalRef.componentInstance.title = `Delete ${this.communityDetails.pageType === 'community'  ? 'Church' : 'Topics'}`;
+    modalRef.componentInstance.title = `Delete ${
+      this.communityDetails.pageType === 'community' ? 'Church' : 'Topics'
+    }`;
     modalRef.componentInstance.confirmButtonLabel = 'Delete';
     modalRef.componentInstance.cancelButtonLabel = 'Cancel';
-    modalRef.componentInstance.message = `Are you sure want to delete this ${this.communityDetails.pageType === 'community'  ? 'Church' : 'Topics'}?`;
+    modalRef.componentInstance.message = `Are you sure want to delete this ${
+      this.communityDetails.pageType === 'community' ? 'Church' : 'Topics'
+    }?`;
     modalRef.result.then((res) => {
       if (res === 'success') {
         this.communityService
@@ -586,22 +627,23 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openUploadEditPostModal(post: any = {}): void {
     const modalRef = this.modalService.open(EditPostModalComponent, {
-      centered: true, backdrop: 'static',
+      centered: true,
+      backdrop: 'static',
     });
+    const postData = { ...post };
     modalRef.componentInstance.title = `Edit Post`;
-    modalRef.componentInstance.confirmButtonLabel = `Save`
+    modalRef.componentInstance.confirmButtonLabel = `Save`;
     modalRef.componentInstance.cancelButtonLabel = 'Cancel';
     modalRef.componentInstance.communityId = this.communityDetails?.Id;
-    modalRef.componentInstance.data = post.id ? post : null;
+    modalRef.componentInstance.data = postData.id ? postData : null;
     modalRef.result.then((res) => {
       if (res.id) {
-        this.postData = res
-        console.log(this.postData)
+        this.postData = res;
         this.uploadPostFileAndCreatePost();
       }
     });
   }
-  
+
   openAlertMessage(): void {
     const modalRef = this.modalService.open(ConfirmationModalComponent, {
       centered: true,
@@ -623,18 +665,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const imgTag = contentContainer.querySelector('img');
 
     if (imgTag) {
-      const tagUserInput = document.querySelector('app-tag-user-input .tag-input-div') as HTMLInputElement;
-      if (tagUserInput) {setTimeout(() => {
-        tagUserInput.innerText = tagUserInput.innerText + ' '.slice(0, -1);
-        const range = document.createRange();
-        const selection = window.getSelection();
-        if (selection) {
-          range.selectNodeContents(tagUserInput);
-          range.collapse(false);
-          selection.removeAllRanges();
-          selection.addRange(range);
-        }
-      }, 100);}
+      const tagUserInput = document.querySelector(
+        'app-tag-user-input .tag-input-div'
+      ) as HTMLInputElement;
+      if (tagUserInput) {
+        setTimeout(() => {
+          tagUserInput.innerText = tagUserInput.innerText + ' '.slice(0, -1);
+          const range = document.createRange();
+          const selection = window.getSelection();
+          if (selection) {
+            range.selectNodeContents(tagUserInput);
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          }
+        }, 100);
+      }
       const imgTitle = imgTag.getAttribute('title');
       const imgStyle = imgTag.getAttribute('style');
       const imageGif = imgTag
@@ -646,8 +692,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         const bytes = copyImage.length;
         const megabytes = bytes / (1024 * 1024);
         if (megabytes > 1) {
-          let copyImageTag = '<img\\s*src\\s*=\\s*""\\s*alt\\s*="">'
-          this.postData['postdescription'] = `<div>${content.replace(copyImage, '').replace(/\<br\>/ig, '').replace(new RegExp(copyImageTag, 'g'), '')}</div>`;
+          let copyImageTag = '<img\\s*src\\s*=\\s*""\\s*alt\\s*="">';
+          this.postData['postdescription'] = `<div>${content
+            .replace(copyImage, '')
+            .replace(/\<br\>/gi, '')
+            .replace(new RegExp(copyImageTag, 'g'), '')}</div>`;
           // this.postData['postdescription'] = content.replace(copyImage, '');
           const base64Image = copyImage
             .trim()
@@ -673,6 +722,25 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     } else {
       this.postData['postdescription'] = content;
+    }
+  }
+
+  openAlertMessageImg(fileInput: HTMLInputElement): void {
+    if (this.postMediaData.length) {
+      fileInput.click();
+    } else {
+      const modalRef = this.modalService.open(ConfirmationModalComponent, {
+        centered: true,
+      });
+      modalRef.componentInstance.title = '';
+      modalRef.componentInstance.confirmButtonLabel = 'Ok';
+      modalRef.componentInstance.cancelButtonLabel = 'Cancel';
+      modalRef.componentInstance.message = `Add up to 4 images`;
+      modalRef.result.then((res) => {
+        if (res === 'success') {
+          fileInput.click();
+        }
+      });
     }
   }
 }

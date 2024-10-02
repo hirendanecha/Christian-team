@@ -11,6 +11,66 @@
     word-break: break-word;
     text-overflow: ellipsis;
   }
+  .share-post {
+    max-width: 663px;
+    width: 100%;
+  }
+
+  // .dropdown-toggle {
+  //   &::after {
+  //     display: none;
+  //   }
+  // }
+  // .emoji-select{
+  //   max-width: 60px;
+  //   min-width: 60px;
+  // }
+  // .emojiModelStyle {
+  //   width: 282px;
+  //   height: 225px;
+
+  //   .emoji-style{
+  //     width: 70px;
+  //   }
+  // }
+
+  .custom-input-area {
+    @media (max-width: 575px) {
+      max-width: calc(100% - 60px);
+    }
+  }
+
+  .select-media-post{
+    min-height: 300px;
+    max-height: 300px;
+    max-width: 300px;
+  }
+
+  ::ng-deep {
+    .carousel-item {
+      transition: none;
+    }
+    .carousel-inner .active {
+      display: flex;
+      justify-content: center;
+      transition: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -o-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+      background-color: gray;
+      top: 115px;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+    }
+  }
 }
 .search-user-list {
   max-height: 332px;
@@ -100,8 +160,6 @@
   }
 
   .share-post {
-    width: 100%;
-    max-width: 696px;
     .post-message-input {
       a {
         font-size: 16px;
@@ -130,5 +188,42 @@
 
   ngb-tooltip-window {
     z-index: 1 !important;
+  }
+}
+.home-input ::ng-deep app-tag-user-input {
+  .input-area {
+    background-color: var(--secondary-color);
+    color: var(--input-text) !important;
+    div,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    a,
+    span,
+    p {
+      color: var(--input-text) !important;
+    }
+    a {
+      color: var(--bs-danger-rgb) !important;
+    }
+  }
+  .tag-input-div {
+    @media (min-width: 575px) and (max-width: 767px) {
+      max-width: 395px;
+    }
+    @media (max-width: 575px) {
+      max-width: unset;
+      width: 100%;
+    }
+  }
+  .select-emaojies {
+    @media (max-width: 575px) {
+      right: -10px;
+      top: unset;
+      bottom: -8px;
+    }
   }
 }

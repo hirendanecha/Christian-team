@@ -196,8 +196,24 @@ export class SocketService {
   getMessages(params, callback: (data: any) => void) {
     this.socket.emit('get-messages', params, callback);
   }
-  
+
   checkRoom(params, callback: (data: any) => void) {
     this.socket.emit('check-room', params, callback);
+  }
+
+  logout(params, callback: (data: any) => void) {
+    this.socket.emit('logout', params, callback);
+  }
+
+  checkCall(params, callback: (data: any) => void) {
+    this.socket.emit('check-call', params, callback);
+  }
+
+  endCall(params) {
+    this.socket.emit('end-call', params);
+  }
+
+  sendNotificationEmail(params) {
+    this.socket.emit('send-notification-email', params);
   }
 }

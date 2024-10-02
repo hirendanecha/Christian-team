@@ -38,7 +38,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   notificationId: number;
   originalFavicon: HTMLLinkElement;
   currentURL = [];
-  isOnCall = false;
+  tagNotificationSound: boolean;
+  messageNotificationSound: boolean;
+  soundEnabled: boolean;
   constructor(
     private sharedService: SharedService,
     private spinner: NgxSpinnerService,
@@ -53,7 +55,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.checkDocumentFocus();
     this.profileId = +localStorage.getItem('profileId');
-    this.isOnCall = this.router.url.includes('/call/') || false;
   }
 
   ngOnInit(): void {
@@ -93,27 +94,32 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.socketService.socket?.connect();
         this.socketService.socket?.emit('online-users');
       }
-
       this.socketService.socket?.on('notification', (data: any) => {
         if (data) {
+          const userData = this.tokenService.getUser();
+          this.sharedService.getLoginUserDetails(userData);
+          this.sharedService.loginUserInfo.subscribe((user) => {
+            this.tagNotificationSound =
+              user.tagNotificationSound === 'Y' || false;
+            this.messageNotificationSound =
+              user.messageNotificationSound === 'Y' || false;
+          });
           if (data?.notificationByProfileId !== this.profileId) {
             this.sharedService.isNotify = true;
             this.originalFavicon.href = '/assets/images/icon-unread.jpg';
           }
+          this.soundControlService.soundEnabled$.subscribe((soundEnabled) => {
+            this.soundEnabled = soundEnabled;
+          });
           this.notificationId = data.id;
           if (data?.actionType === 'T') {
-            var sound = new Howl({
-              src: [
-                'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-notification.mp3',
-              ],
-            });
-            const notificationSoundOct = JSON.parse(
-              localStorage.getItem('soundPreferences')
-            )?.notificationSoundEnabled;
-            if (notificationSoundOct !== 'N') {
-              if (sound) {
-                sound?.play();
-              }
+            // const notificationSoundOct = JSON.parse(
+            //   localStorage.getItem('soundPreferences')
+            // )?.notificationSoundEnabled;
+            if (this.tagNotificationSound && this.soundEnabled) {
+              const url =
+                'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-notification.mp3';
+              this.soundIntegration(url);
             }
           }
           if (
@@ -121,19 +127,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             data?.notificationByProfileId !== this.profileId
           ) {
             this.newRoomCreated.emit(true);
-            var sound = new Howl({
-              src: [
-                'https://s3.us-east-1.wasabisys.com/freedom-social/messageTone.mp3',
-              ],
-              volume: 0.5,
-            });
-            const messageSoundOct = JSON.parse(
-              localStorage.getItem('soundPreferences')
-            )?.messageSoundEnabled;
-            if (messageSoundOct !== 'N') {
-              if (sound) {
-                sound?.play();
-              }
+            // const messageSoundOct = JSON.parse(
+            //   localStorage.getItem('soundPreferences')
+            // )?.messageSoundEnabled;
+            // if (messageSoundOct !== 'N') {
+            //   if (sound) {
+            //     sound?.play();
+            //   }
+            // }
+            if (this.messageNotificationSound && this.soundEnabled) {
+              const url =
+                'https://s3.us-east-1.wasabisys.com/freedom-social/messageTone.mp3';
+              this.soundIntegration(url);
             }
             this.toasterService.success(data?.notificationDesc);
             return this.sharedService.updateIsRoomCreated(true);
@@ -174,7 +179,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 roomId: data.roomId || null,
                 groupId: data.groupId || null,
               };
-              if (!window.document.hidden) {
+              if (
+                !window.document.hidden &&
+                this.sharedService.isCorrectBrowserSession()
+              ) {
                 const callIdMatch = data.link.match(/callId-\d+/);
                 const callId = callIdMatch ? callIdMatch[0] : data.link;
                 this.router.navigate([`/call/${callId}`], {
@@ -242,6 +250,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           // this.socketService.socket?.emit('join', { room: profileId });
         }
       }, 3000);
+    }
+  }
+
+  soundIntegration(soundUrl: string): void {
+    var sound = new Howl({
+      src: [soundUrl],
+      volume: 0.8,
+    });
+    if (sound) {
+      sound?.play();
     }
   }
 

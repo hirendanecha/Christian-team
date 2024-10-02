@@ -91,27 +91,26 @@ export class PostService {
   }
 
 
-  uploadFile(
-    files: File,
-    params?: any
-  ): Observable<HttpEvent<any>> {
+  uploadFile(files: File[], params?: any): Observable<HttpEvent<any>> {
     const url = `${environment.serverUrl}posts/upload`;
     const formData: FormData = new FormData();
-    formData.append('file', files);
-    let queryParams = new HttpParams();
-    if (params) { Object.keys(params).forEach(key => {
-      if (params[key]) {queryParams = queryParams.append(key, params[key])}
+    files.forEach((file) => {
+      formData.append('files', file, file.name);
     });
-  }
-  const reqUrl = queryParams.toString() ? `${url}?${queryParams.toString()}` : url;
-    const req =
-      new HttpRequest(
-        'POST',
-        reqUrl,
-        formData,
-        {
-          reportProgress: true,
-          responseType: 'json',
+    let queryParams = new HttpParams();
+    if (params) {
+      Object.keys(params).forEach((key) => {
+        if (params[key]) {
+          queryParams = queryParams.append(key, params[key]);
+        }
+      });
+    }
+    const reqUrl = queryParams.toString()
+      ? `${url}?${queryParams.toString()}`
+      : url;
+    const req = new HttpRequest('POST', reqUrl, formData, {
+      reportProgress: true,
+      responseType: 'json',
         }
       );
     return this.http.request(req);

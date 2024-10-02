@@ -16,7 +16,7 @@ export class CustomerService {
 
   customerObs: Subject<any> = new Subject<any>();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getCustomer(id: number): Observable<any> {
     this.http
@@ -39,7 +39,9 @@ export class CustomerService {
   }
 
   deleteCustomer(id: number, profileId: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}?profileId=${profileId}`, { responseType: 'text' });
+    return this.http.delete(`${this.baseUrl}/${id}?profileId=${profileId}`, {
+      responseType: 'text',
+    });
   }
 
   getCustomersList(): Observable<any> {
@@ -69,10 +71,10 @@ export class CustomerService {
   }
 
   getProfile(id): Observable<Object> {
-    return this.http.get<Object>(`${this.baseUrl}/profile/${id}`);
+    return this.http.get<Object>(`${this.baseUrl}/profile/${id}?q=${Date.now()}`);
   }
 
-  updateProfile(id, customer: Customer): Observable<Object> {
+  updateProfile(id, customer): Observable<Object> {
     const token = localStorage.getItem('auth-token');
     return this.http.put(`${this.baseUrl}/profile/${id}`, customer, {
       headers: {
@@ -107,29 +109,30 @@ export class CustomerService {
   }
 
   logout(): Observable<any> {
-    return this.http.get(
-      `${this.baseUrl}/logout`,
-      httpOptions
-    );
+    return this.http.get(`${this.baseUrl}/logout`, httpOptions);
   }
 
   getNotification(id): Observable<any> {
-    return this.http.get(
-      `${this.baseUrl}/notification/${id}&q=${Date.now()}`,
-    );
+    return this.http.get(`${this.baseUrl}/notification/${id}&q=${Date.now()}`);
   }
 
   verifyToken(token): Observable<any> {
     return this.http.get(`${this.baseUrl}/verify-token/${token}`);
   }
 
-  startCallToBuzzRing(callerData: Object): Observable<any>{
-    const url = 'https://ring-api.christian.team/api/v1/customers/call-notification';
+  startCallToBuzzRing(callerData: Object): Observable<any> {
+    const url =
+      'https://ring-api.christian.team/api/v1/customers/call-notification';
     return this.http.post(url, callerData);
   }
 
-  startGroupCallToBuzzRing(callerData: Object): Observable<any>{
-    const url = 'https://ring-api.christian.team/api/v1/customers/group-call-notification';
+  startGroupCallToBuzzRing(callerData: Object): Observable<any> {
+    const url =
+      'https://ring-api.christian.team/api/v1/customers/group-call-notification';
     return this.http.post(url, callerData);
+  }
+
+  updateNotificationSound(data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/onOff-notification`, data);
   }
 }
