@@ -96,6 +96,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       this.socketService.socket?.on('notification', (data: any) => {
         if (data) {
+          if (data.actionType === 'S') {
+            this.toasterService.danger(data?.notificationDesc);
+            this.logout();
+          }
+          if (
+            data.actionType === 'EC' &&
+            data.notificationByProfileId !== this.profileId &&
+            sessionStorage.getItem('callId')
+          ) {
+            this.sharedService.callId = null;
+            sessionStorage.removeItem('callId');
+            const endCall = {
+              profileId: this.profileId,
+              roomId: data.roomId,
+            };
+            this.socketService?.endCall(endCall);
+          }
           const userData = this.tokenService.getUser();
           this.sharedService.getLoginUserDetails(userData);
           this.sharedService.loginUserInfo.subscribe((user) => {
@@ -185,10 +202,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               ) {
                 const callIdMatch = data.link.match(/callId-\d+/);
                 const callId = callIdMatch ? callIdMatch[0] : data.link;
-                this.router.navigate([`/call/${callId}`], {
+                this.router.navigate([`/facetime/${callId}`], {
                   state: { chatDataPass },
                 });
-                // this.router.navigate([`/buzz-call/${data.link}`]);
+                // this.router.navigate([`/facetime/${data.link}`]);
               }
               // window.open(`appointment-call/${data.link}`, '_blank');
               // window?.open(data?.link, '_blank');
@@ -256,11 +273,36 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   soundIntegration(soundUrl: string): void {
     var sound = new Howl({
       src: [soundUrl],
-      volume: 0.8,
+      volume: 0.5,
     });
     if (sound) {
       sound?.play();
     }
+  }
+
+  logout(): void {
+    this.socketService?.socket?.emit('offline', (data) => {
+      return;
+    });
+    this.socketService?.socket?.on('get-users', (data) => {
+      data.map((ele) => {
+        if (!this.sharedService.onlineUserList.includes(ele.userId)) {
+          this.sharedService.onlineUserList.push(ele.userId);
+        }
+      });
+    });
+    this.customerService.logout().subscribe({
+      next: (res) => {
+        this.tokenService.clearLoginSession(this.profileId);
+        this.tokenService.signOut();
+        return;
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          this.tokenService.signOut();
+        }
+      },
+    });
   }
 
   ngOnDestroy(): void {

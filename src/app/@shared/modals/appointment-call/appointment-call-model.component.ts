@@ -48,7 +48,7 @@ export class AppointmentCallModelComponent implements OnInit {
     private socketService: SocketService,
   ) {
     const data = {
-      title: 'Buzz Chat',
+      title: 'Christian.team Chat',
       url: `${location.href}`,
       description: '',
     };
@@ -65,7 +65,7 @@ export class AppointmentCallModelComponent implements OnInit {
       };
     }
     const appointmentURLCall =
-      this.route.snapshot['_routerState'].url.split('/call/')[1];
+      this.route.snapshot['_routerState'].url.split('/facetime/')[1];
     sessionStorage.setItem('callId', appointmentURLCall);
     this.screenSubscription = this.breakpointService?.screen.subscribe(
       (screen) => {

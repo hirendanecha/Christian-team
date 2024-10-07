@@ -50,7 +50,7 @@ export class IncomingcallModalComponent
     private sharedService: SharedService
   ) {
     this.profileId = +localStorage.getItem('profileId');
-    // this.isOnCall = this.router.url.includes('/buzz-call/') || false;
+    // this.isOnCall = this.router.url.includes('/facetime/') || false;
   }
   
   ngAfterViewInit(): void {
@@ -125,12 +125,12 @@ export class IncomingcallModalComponent
         const parts = window.location.href.split('/');
         const callId = parts[parts.length - 1];
         this.calldata.link = callId;
-        this.router.navigate([`/buzz-call/${callId}`], {
+        this.router.navigate([`/facetime/${callId}`], {
           state: { chatDataPass },
         });
       } else {
         const callId = this.calldata.link.replace('https://facetime.tube/', '');
-        this.router.navigate([`/buzz-call/${callId}`], {
+        this.router.navigate([`/facetime/${callId}`], {
           state: { chatDataPass },
         });
       }

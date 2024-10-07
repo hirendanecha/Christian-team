@@ -15,7 +15,6 @@ export class NotificationsComponent {
   notificationList: any[] = [];
   activePage = 1;
   hasMoreData = false;
-
   constructor(
     private customerService: CustomerService,
     private spinner: NgxSpinnerService,
@@ -25,8 +24,8 @@ export class NotificationsComponent {
     private socketService: SocketService
   ) {
     const data = {
-      title: 'Christian.tube Notification',
-      url: `${window.location.href}`,
+      title: 'Christian.team Notification',
+      url: `${location.href}`,
       description: '',
     };
     this.seoService.updateSeoMetaData(data);
@@ -70,20 +69,26 @@ export class NotificationsComponent {
         this.toastService.success(
           res.message || 'Notification delete successfully'
         );
-        this.notificationList = [];
-        this.getNotificationList();
+        this.notificationList = this.notificationList.filter(
+          (notification) => notification.id !== id
+        );
+        if (this.notificationList.length <= 6 && this.hasMoreData) {
+          this.notificationList = [];
+          this.loadMoreNotification();
+        }
       },
     });
   }
 
-  readUnreadNotification(id, isRead): void {
-    this.customerService.readUnreadNotification(id, isRead).subscribe({
-      next: (res) => {
-        this.toastService.success(res.message);
-        this.notificationList = [];
-        this.getNotificationList();
-      },
-    });
+  readUnreadNotification(notification, isRead): void {
+    this.customerService
+      .readUnreadNotification(notification.id, isRead)
+      .subscribe({
+        next: (res) => {
+          this.toastService.success(res.message);
+          notification.isRead = isRead;
+        },
+      });
   }
   loadMoreNotification(): void {
     this.activePage = this.activePage + 1;
