@@ -7,6 +7,6 @@ export class NoSanitizePipe implements PipeTransform {
 
   }
   transform(html: string): SafeHtml {
-    return this.domSanitizer.bypassSecurityTrustHtml(html);
+    return this.domSanitizer.bypassSecurityTrustHtml(html || '');
   }
 }

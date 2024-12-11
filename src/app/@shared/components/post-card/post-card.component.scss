@@ -53,6 +53,17 @@
       display: unset;
       opacity: 1;
     }
+
+    .comments-area {
+      .hover-box-container {
+        top: 12px;
+      }
+    
+      .reply-hover .hover-box-container {
+        top: 25px;
+      }
+    }    
+
     .post-description {
       p {
         h1 {
@@ -155,6 +166,7 @@
     }
 
     .post-description {
+      // white-space: normal;
       white-space: pre-wrap;
       max-width: 541px;
       p {
@@ -354,25 +366,19 @@
     }
   }
 
-  .custom-width-comment {
-    .file-custom {
-      @media (max-width: 575px) {
-        position: relative;
-        right: 50px;
-      }
-    }
+  .subscribe-btns {
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    border-color: var(--font-icon-color);
   }
-  .custom-width-comment ::ng-deep app-tag-user-input {
-    .tag-input-div {
-      @media (max-width: 575px) {
-        width: 100%;
-        z-index: 1;
-      }
+
+  .custom-width-comment {
+    .set-icons {
+      top: 10px;
     }
-    .select-emaojies {
-      @media (max-width: 575px) {
-        right: 80px;
-        top: 58px;
+    ::ng-deep app-tag-user-input {
+      .tag-input-div {
+        max-width: calc(100% - 108px);
       }
     }
   }
@@ -392,7 +398,55 @@
     -webkit-box-orient: vertical;
   }
 
+  .text-transform{
+    text-transform: none;
+  }
+
+  .post-img {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .single {
+      flex: 1;
+      img {
+        width: 100%;
+        height: auto;
+      }
+
+      &.d-grid {
+        display: grid;
+        gap: 8px;
+      }
+
+      &:nth-child(2) {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(2, 1fr);
+      }
+
+      &:nth-child(3) {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(2, 1fr);
+      }
+
+      &:nth-child(4) {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+      }
+    }
+  }
+
+  
   ::ng-deep {
+    app-post-meta-data-card a {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--link-color);
+    }
     .post-description {
       h1,
       h2,
@@ -405,6 +459,7 @@
       p,
       em,
       div,
+      font,
       strong,
       li {
         font-size: 18px !important;
@@ -415,6 +470,7 @@
         font-weight: 500 !important;
         color: unset !important;
         text-wrap: unset !important;
+        white-space: normal;
       }
       .video-player {
         display: none !important;
@@ -424,7 +480,7 @@
         line-height: 22px !important;
         margin: unset !important;
         background-color: unset !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
       }
       img,
       svg {
@@ -455,7 +511,6 @@
       h5,
       h6,
       span,
-      a,
       em,
       li {
         font-size: 18px !important;
@@ -467,6 +522,13 @@
       em,
       span {
         color: var(--para-2nd-color) !important;
+      }
+      a{
+        font-size: 18px !important;
+        line-height: normal;
+        margin: unset;
+        background-color: unset !important;
+        font-weight: 600 !important;
       }
       .comment-description {
         img {
@@ -509,5 +571,5 @@
   background: var(--body-color);
   border-radius: 15px;
   padding: 10px 10px;
-  margin: 5px 40px 40px 0px;
+  margin: 0px 40px 40px 0px;
 }

@@ -53,8 +53,10 @@ export class PostCardComponent implements OnInit {
   commentList: any = [];
   replyCommentList: any = [];
   isReply = false;
+  parentReplayComment: boolean = false;
 
   commentId = null;
+  commentparentReplayId = null;
   commentData: any = {
     file: null,
     url: '',
@@ -70,11 +72,14 @@ export class PostCardComponent implements OnInit {
   tubeUrl = environment.tubeUrl;
   player: any;
   isExpand = false;
+  showFullDesc: boolean = false;
+  showFullDescMap: { [commentId: number]: boolean } = {};
   commentCount = 0;
   commentMessageInputValue: string = '';
   replaycommentMessageInputValue: string = '';
   commentMessageTags: any[];
   showHoverBox = false;
+  showCommentHoverBox: number | null = null;
   unSubscribeProfileIds: any = [];
 
   descriptionimageUrl: string;
@@ -83,9 +88,7 @@ export class PostCardComponent implements OnInit {
   shareButton = false;
   isViewProfile = false;
   emojiPaths = EmojiPaths;
-  parentReplayComment: boolean = false;
-  commentparentReplayId = null;
-  showFullDesc: boolean = false;
+
   constructor(
     private seeFirstUserService: SeeFirstUserService,
     private unsubscribeProfileService: UnsubscribeProfileService,
@@ -128,15 +131,15 @@ export class PostCardComponent implements OnInit {
   ngOnInit(): void {
     // this.socketListner();
     this.viewComments(this.post?.id);
+    this.descriptionimageUrl = this.extractImageUrlFromContent(
+      this.post.postdescription
+    );
   }
 
   ngAfterViewInit(): void {
     // if (this.post?.posttype === 'V') {
     //   this.playVideo(this.post?.id);
     // }
-    this.descriptionimageUrl = this.extractImageUrlFromContent(
-      this.post.postdescription
-    );
     const path = this.route.snapshot.routeConfig.path;
     if (path === 'view-profile/:id' || path === 'post/:id') {
       this.shareButton = true;
@@ -204,6 +207,15 @@ export class PostCardComponent implements OnInit {
       }
     });
   }
+  showFullDescription(type?, commentId?): void {
+    if (type === 'comment') {
+      this.showFullDescMap[commentId] = !this.showFullDescMap[commentId];
+    } else if (type === 'reply') {
+      this.showFullDescMap[commentId] = !this.showFullDescMap[commentId];
+    } else {
+      this.showFullDesc = !this.showFullDesc;
+    }
+  }
 
   unsubscribe(post: any): void {
     // post['hide'] = true;
@@ -237,7 +249,7 @@ export class PostCardComponent implements OnInit {
         queryParams: { chatUserData: encodedUserData },
       })
       .toString();
-    window.open(url, '_blank');
+    this.router.navigateByUrl(url);
   }
   goToViewProfile(id: any): void {
     this.router.navigate([`settings/view-profile/${id}`]);
@@ -318,17 +330,8 @@ export class PostCardComponent implements OnInit {
       'Are you sure want to delete this post?';
     modalRef.result.then((res) => {
       if (res === 'success') {
-        this.postService.deletePost(post.id).subscribe({
-          next: (res: any) => {
-            if (res) {
-              this.toastService.success(res.message);
-              this.getPostList?.emit();
-            }
-          },
-          error: (error) => {
-            console.log('error : ', error);
-          },
-        });
+        this.socketService.delePosts({ id: post.id });
+        this.getPostList?.emit();
       }
     });
   }
@@ -445,6 +448,11 @@ export class PostCardComponent implements OnInit {
       this.commentId = comment.id;
       if (!this.isReply) {
         this.commentId = null;
+      } else {
+        this.commentparentReplayId = null;
+        setTimeout(() => {
+          this.focusTagInput(comment.id);
+        }, 10);
       }
     } else if (commentType === 'parentReplay') {
       this.parentReplayComment =
@@ -452,6 +460,11 @@ export class PostCardComponent implements OnInit {
       this.commentparentReplayId = comment.id;
       if (!this.parentReplayComment) {
         this.commentparentReplayId = null;
+      } else {
+        this.commentId = null;
+        setTimeout(() => {
+          this.focusTagInput(comment.parentCommentId);
+        }, 10);
       }
     }
   }
@@ -570,14 +583,19 @@ export class PostCardComponent implements OnInit {
     // }
   }
 
-  onPostFileSelect(event: any, type: string, postId: number): void {
+  onPostFileSelect(
+    event: any,
+    type: string,
+    postId: number,
+    commentId?: number
+  ): void {
     if (type === 'parent') {
       this.isParent = true;
     } else {
       this.isParent = false;
     }
     const file = event.target?.files?.[0] || {};
-    this.focusTagInput(postId);
+    this.focusTagInput(commentId || postId);
     if (file.type.includes('image/')) {
       this.commentData['file'] = file;
       this.commentData['imageUrl'] = URL.createObjectURL(file);
@@ -640,13 +658,13 @@ export class PostCardComponent implements OnInit {
     }
   }
 
-  onTagUserInputChangeEvent(data: any, postId): void {
-    this.extractLargeImageFromContent(data.html, postId);
+  onTagUserInputChangeEvent(data: any, postId, commentId?: number): void {
+    this.extractLargeImageFromContent(data.html, postId, commentId);
     this.commentData.meta = data?.meta;
     this.commentMessageTags = data?.tags;
   }
-  onTagUserReplayInputChangeEvent(data: any, postId): void {
-    this.extractLargeImageFromContent(data.html, postId);
+  onTagUserReplayInputChangeEvent(data: any, postId, commentId?: number): void {
+    this.extractLargeImageFromContent(data.html, postId, commentId);
     this.commentData.meta = data?.meta;
     this.commentMessageTags = data?.tags;
   }
@@ -767,7 +785,7 @@ export class PostCardComponent implements OnInit {
     this.commentOnPost(post);
   }
 
-  extractLargeImageFromContent(content: string, postId): void {
+  extractLargeImageFromContent(content: string, postId, commentId): void {
     const contentContainer = document.createElement('div');
     contentContainer.innerHTML = content;
     const imgTag = contentContainer.querySelector('img');
@@ -780,36 +798,36 @@ export class PostCardComponent implements OnInit {
         .toLowerCase()
         .endsWith('.gif');
       if (!imgTitle && !imgStyle && !imageGif) {
-        this.focusTagInput(postId);
+        this.focusTagInput(commentId || postId);
         const copyImage = imgTag.getAttribute('src');
-        const bytes = copyImage.length;
-        const megabytes = bytes / (1024 * 1024);
-        if (megabytes > 1) {
-          // this.commentData.comment = content.replace(copyImage, '');
-          let copyImageTag = '<img\\s*src\\s*=\\s*""\\s*alt\\s*="">';
-          this.commentData.comment = `<div>${content
-            .replace(copyImage, '')
-            .replace(/\<br\>/gi, '')
-            .replace(new RegExp(copyImageTag, 'g'), '')}</div>`;
-          const base64Image = copyImage
-            .trim()
-            .replace(/^data:image\/\w+;base64,/, '');
-          try {
-            const binaryString = window.atob(base64Image);
-            const uint8Array = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-              uint8Array[i] = binaryString.charCodeAt(i);
-            }
-            const blob = new Blob([uint8Array], { type: 'image/jpeg' });
-            const fileName = `copyImage-${new Date().getTime()}.jpg`;
-            const file = new File([blob], fileName, { type: 'image/jpeg' });
-            this.commentData['file'] = file;
-          } catch (error) {
-            console.error('Base64 decoding error:', error);
+        // const bytes = copyImage.length;
+        // const megabytes = bytes / (1024 * 1024);
+        // if (megabytes > 1) {
+        // this.commentData.comment = content.replace(copyImage, '');
+        let copyImageTag = '<img\\s*src\\s*=\\s*""\\s*alt\\s*="">';
+        this.commentData.comment = `<div>${content
+          .replace(copyImage, '')
+          .replace(/\<br\>/gi, '')
+          .replace(new RegExp(copyImageTag, 'g'), '')}</div>`;
+        const base64Image = copyImage
+          .trim()
+          .replace(/^data:image\/\w+;base64,/, '');
+        try {
+          const binaryString = window.atob(base64Image);
+          const uint8Array = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            uint8Array[i] = binaryString.charCodeAt(i);
           }
-        } else {
-          this.commentData.comment = content;
+          const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+          const fileName = `copyImage-${new Date().getTime()}.jpg`;
+          const file = new File([blob], fileName, { type: 'image/jpeg' });
+          this.commentData['file'] = file;
+        } catch (error) {
+          console.error('Base64 decoding error:', error);
         }
+        // } else {
+        //   this.commentData.comment = content;
+        // }
       } else {
         this.commentData.comment = content;
       }
@@ -844,9 +862,11 @@ export class PostCardComponent implements OnInit {
     }
   }
 
-  showFullDescription() {
-    console.log(this.post.postdescription?.length);
-
-    this.showFullDesc = !this.showFullDesc;
+  opyData(post): string {
+    return `<a href="/settings/view-profile/${
+      post.profileid || post.profileId
+    }" class="text-danger" data-id="${post.profileid || post.profileId}">@${
+      post.Username
+    }</a>`;
   }
 }

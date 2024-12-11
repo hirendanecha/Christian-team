@@ -14,7 +14,7 @@
           />
         </div>
       </div>
-      <div class="row mt-5">
+      <div class="row mt-5 justify-content-between">
         <div class="col-md-4 profile text-start d-flex align-items-center">
           <img
             class="preview-image w-120-px h-120-px"
@@ -30,7 +30,7 @@
             <h3 class="d-flex">
               {{ customer?.Username }}
             </h3>
-            <div class="col-md" *ngIf="+profileId === customer.Id">
+            <div class="col-md" *ngIf="+profileId === customer?.profileId">
               <button
                 class="btn btn-sm cmn-btn float-end d-flex"
                 (click)="openEditProfile()"
@@ -40,6 +40,24 @@
               </button>
             </div>
           </div>
+        </div>
+        <div
+          class="col-md-5 profile text-start d-flex align-items-center justify-content-sm-center mt-2 mt-md-0 position-relative"
+        >
+          <label for="">Search Profile posts:</label>
+          <input
+            type="text"
+            [(ngModel)]="searchText"
+            class="post-search-input"
+            placeholder="Search"
+            (input)="searchPosts($event)"
+          />
+          <fa-icon
+            *ngIf="searchText"
+            [icon]="['fas', 'xmark']"
+            class="font-12-px position-absolute close-icon"
+            (click)="searchText = ''"
+          />
         </div>
       </div>
       <div class="row mt-8">
@@ -84,8 +102,10 @@
     <div class="flex-column mb-15 w-100">
       <ng-container *ngIf="activeTab === 1">
         <app-post-list
+          class="post-card"
           parentComponent="ViewProfileComponent"
           [id]="profileId"
+          [searchText]="this.searchText"
         />
       </ng-container>
       <ng-container *ngIf="activeTab === 2">
@@ -163,9 +183,9 @@
                 <p class="smtxt public-group">
                   {{ community.CommunityDescription }}
                 </p>
-                <!-- <div class="friends-list d-center mt-3 gap-1 text-center">
+                <div class="friends-list d-center mt-3 gap-1 text-center">
                   <span class="smtxt m-0">{{ community.members }} Member</span>
-                </div> -->
+                </div>
                 <div class="d-center btn-border pt-5 gap-2 mt-4">
                   <button
                     class="cmn-btn p-2 alt third"
@@ -185,7 +205,7 @@
         </ng-template>
       </ng-container>
       <ng-container *ngIf="activeTab === 3">
-        <ng-container  *ngIf="pdfList.length; else noData">
+        <ng-container *ngIf="pdfList.length; else noData">
           <div class="single-box" *ngFor="let item of pdfList">
             <div class="d-flex p-4 justify-content-between">
               <div class="d-flex">
@@ -207,28 +227,24 @@
                       item?.Username
                     }}</a>
                     <span class="smtxt time-schedule ms-1">
-                    <fa-icon class="ms-2" [icon]="['fas', 'clock']" />
-                      {{ item.postcreationdate | dateDay }}</span>
+                      <fa-icon class="ms-2" [icon]="['fas', 'clock']" />
+                      {{ item.postcreationdate | dateDay }}</span
+                    >
                   </h6>
-                  <a class="ms-1 cursor c-color" [href]="item?.pdfUrl" target="_blank">{{ item?.pdfName }}</a>
+                  <a
+                    class="ms-1 cursor c-color"
+                    [href]="item?.pdfUrl"
+                    >{{ item?.pdfName }}</a
+                  >
                 </div>
               </div>
-  
+
               <div class="btn-group cus-dropdown d-flex gap-3">
                 <div ngbDropdown class="d-inline-block">
                   <button class="dropdown-btn" ngbDropdownToggle>
                     <fa-icon [icon]="['fas', 'ellipsis']" class="font-24-px" />
                   </button>
                   <div ngbDropdownMenu class="dropdown-menu">
-                    <button ngbDropdownItem>
-                      <a
-                        class="droplist d-flex align-items-center gap-2"
-                        [appCopyClipboard]="item.pdfUrl"
-                      >
-                        <fa-icon [icon]="['fas', 'link']" />
-                        <span>Copy URL</span>
-                      </a>
-                    </button>
                     <button ngbDropdownItem>
                       <!-- (click)="readUnreadNotification(notification.id, 'N')" -->
                       <a
@@ -237,6 +253,25 @@
                       >
                         <fa-icon [icon]="['fas', 'download']" />
                         <span>Download</span>
+                      </a>
+                    </button>
+                    <button ngbDropdownItem>
+                      <a
+                        class="droplist d-flex align-items-center gap-2"
+                        *ngIf="profileId == customer?.profileId"
+                        (click)="deletePost(item.id)"
+                      >
+                        <fa-icon [icon]="['fas', 'trash-can']" />
+                        <span>Delete</span>
+                      </a>
+                    </button>
+                    <button ngbDropdownItem>
+                      <a
+                        class="droplist d-flex align-items-center gap-2"
+                        [appCopyClipboard]="item.pdfUrl"
+                      >
+                        <fa-icon [icon]="['fas', 'link']" />
+                        <span>Copy URL</span>
                       </a>
                     </button>
                   </div>
@@ -253,7 +288,7 @@
       </ng-container>
     </div>
 
-    <ng-container *ngIf="(breakpointService?.screen | async).xl.gatherThen">
+    <ng-container *ngIf="(breakpointService?.screen | async).xxl.gatherThen">
       <div class="my-list-sidebar">
         <app-right-sidebar />
       </div>

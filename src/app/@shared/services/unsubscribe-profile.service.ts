@@ -17,7 +17,8 @@ export class UnsubscribeProfileService {
   }
 
   remove(id: number): Observable<Object> {
-    return this.http.delete(`${this.baseUrl}/remove/${id}?q=${Date.now()}`)
+    // return this.http.delete(`${this.baseUrl}/remove/${id}`);
+    return this.http.delete(`${this.baseUrl}/remove/${id}?q=${Date.now()}`);
   }
 
   getByProfileId(profileId: number): Observable<Object> {

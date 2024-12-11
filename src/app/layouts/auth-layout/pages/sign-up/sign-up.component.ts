@@ -15,7 +15,9 @@ import { SeoService } from 'src/app/@shared/services/seo.service';
 import { ToastService } from 'src/app/@shared/services/toast.service';
 import { UploadFilesService } from 'src/app/@shared/services/upload-files.service';
 import { environment } from 'src/environments/environment';
+
 declare var turnstile: any;
+
 @Component({
   selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
@@ -34,17 +36,17 @@ export class SignUpComponent implements OnInit, AfterViewInit {
   type = 'danger';
   defaultCountry = 'US';
   allStateData: any;
-  selectedState = '';
   profilePic: string;
   profileImg: any = {
     file: null,
     url: '',
   };
+  theme = '';
   passwordHidden: boolean = true;
-  confirmPasswordHidden: boolean = true;
+  confirmpasswordHidden: boolean = true;
 
   @ViewChild('zipCode') zipCode: ElementRef;
-  captchaToken = '';
+
   registerForm = new FormGroup({
     FirstName: new FormControl(''),
     LastName: new FormControl(''),
@@ -54,15 +56,14 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     confirm_password: new FormControl('', [Validators.required]),
     MobileNo: new FormControl(''),
     Country: new FormControl('US', [Validators.required]),
-    Zip: new FormControl('', Validators.required),
-    State: new FormControl('', Validators.required),
+    Zip: new FormControl(''),
+    State: new FormControl(''),
     City: new FormControl(''),
     County: new FormControl(''),
     TermAndPolicy: new FormControl(false, Validators.required),
+    Anonymous: new FormControl(false),
   });
-
-  theme = '';
-  @ViewChild('captcha', { static: true }) captchaElement: ElementRef;
+  @ViewChild('captcha', { static: false }) captchaElement: ElementRef;
   constructor(
     private spinner: NgxSpinnerService,
     private route: ActivatedRoute,
@@ -78,7 +79,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       description: 'Registration page',
       image: `${environment.webUrl}assets/images/landingpage/placeholder-user.png`,
     };
-    // this.seoService.updateSeoMetaData(data);
+    this.theme = localStorage.getItem('theme');
   }
 
   ngOnInit(): void {
@@ -91,20 +92,18 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     //   .subscribe((event) => {
     //     const val = event['target'].value;
     //     if (val.length > 3) {
-    //       // this.onZipChange(val);
+    //        this.onZipChange(val);
     //     }
     //   });
-    this.loadCloudFlareWidget();
+    // this.loadCloudFlareWidget();
   }
+
   loadCloudFlareWidget() {
     turnstile?.render(this.captchaElement.nativeElement, {
       sitekey: environment.siteKey,
       theme: this.theme === 'dark' ? 'light' : 'dark',
       callback: function (token) {
         localStorage.setItem('captcha-token', token);
-        this.captchaToken = token;
-        localStorage.setItem('captcha-token', token);
-        console.log(`Challenge Success ${token}`);
         if (!token) {
           this.msg = 'invalid captcha kindly try again!';
           this.type = 'danger';
@@ -112,6 +111,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       },
     });
   }
+
   togglePasswordVisibility(passwordInput: HTMLInputElement) {
     passwordInput.type =
       passwordInput.type === 'password' ? 'text' : 'password';
@@ -121,7 +121,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
   toggleConfirmPasswordVisibility(confirmpasswordInput: HTMLInputElement) {
     confirmpasswordInput.type =
       confirmpasswordInput.type === 'password' ? 'text' : 'password';
-    this.confirmPasswordHidden = !this.confirmPasswordHidden;
+    this.confirmpasswordHidden = !this.confirmpasswordHidden;
   }
 
   selectFiles(event) {
@@ -129,9 +129,6 @@ export class SignUpComponent implements OnInit, AfterViewInit {
   }
 
   upload(file: any = {}) {
-    // if (file.size / (1024 * 1024) > 5) {
-    //   return 'Image file size exceeds 5 MB!';
-    // }
     this.spinner.show();
     if (file) {
       this.uploadService.uploadFile(file).subscribe({
@@ -139,12 +136,8 @@ export class SignUpComponent implements OnInit, AfterViewInit {
           this.spinner.hide();
           if (res.body) {
             this.profilePic = res?.body?.url;
-            this.creatProfile(this.registerForm.value);
+            this.createProfile(this.registerForm.value);
           }
-          // if (file?.size < 5120000) {
-          // } else {
-          //   this.toastService.warring('Image is too large!');
-          // }
         },
         error: (err) => {
           this.spinner.hide();
@@ -157,53 +150,64 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       });
     } else {
       this.spinner.hide();
-      this.creatProfile(this.registerForm.value);
+      this.createProfile(this.registerForm.value);
     }
   }
 
   save() {
-    this.spinner.show();
-    const token = localStorage.getItem('captcha-token');
-    if (!token) {
-      this.spinner.hide();
-      this.msg = 'Invalid captcha kindly try again!';
-      this.type = 'danger';
-      this.scrollTop();
-      return;
-    }
-
-    this.customerService.createCustomer(this.registerForm.value).subscribe({
-      next: (data: any) => {
-        this.spinner.hide();
-        if (!data.error) {
-          this.submitted = true;
-          window.sessionStorage.user_id = data.data;
-          this.registrationMessage =
-            'Your account has registered successfully. Kindly login with your email and password !!!';
-          this.scrollTop();
-          this.isragister = true;
-          const id = data.data;
-          if (id) {
-            this.upload(this.profileImg?.file);
-            localStorage.setItem('register', String(this.isragister));
-            this.router.navigateByUrl('/login?isVerify=false');
+    // const token = localStorage.getItem('captcha-token');
+    // if (!token) {
+    //   this.msg = 'Invalid captcha kindly try again!';
+    //   this.type = 'danger';
+    //   this.scrollTop();
+    //   return;
+    // }
+    if (this.registerForm.valid) {
+      this.spinner.show();
+      this.customerService.createCustomer(this.registerForm.value).subscribe({
+        next: (data: any) => {
+          this.spinner.hide();
+          if (!data.error) {
+            this.submitted = true;
+            window.sessionStorage.user_id = data.data;
+            this.registrationMessage =
+              'Your account has registered successfully. Kindly login with your email and password !!!';
+            this.scrollTop();
+            this.isragister = true;
+            const id = data.data;
+            if (id) {
+              this.upload(this.profileImg?.file);
+              localStorage.setItem('register', String(this.isragister));
+              this.router.navigateByUrl('/login?isVerify=false');
+            }
           }
-        }
-      },
-      error: (err) => {
-        this.registrationMessage = err.error.message;
-        this.type = 'danger';
-        this.spinner.hide();
-        this.scrollTop();
-      },
-    });
+        },
+        error: (err) => {
+          this.registrationMessage = err.error.message;
+          this.type = 'danger';
+          this.spinner.hide();
+          this.scrollTop();
+        },
+      });
+    }
+  }
+
+  validateEmail() {
+    const emailControl = this.registerForm.get('Email');
+    const emailError = Validators.email(emailControl);
+    if (emailError) {
+      this.msg = 'Please enter a valid email address.';
+      this.scrollTop();
+      return false;
+    }
+    return true;
   }
 
   validatepassword(): boolean {
-    const pattern = '[a-zA-Z0-9]{5,}';
+    // const pattern = '[a-zA-Z0-9]{5,}';
     // const pattern =
     //   '(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[a-z])(?=.*[0-9].*[0-9]).{8}';
-
+    const pattern = '.{5,}';
     if (!this.registerForm.get('Password').value.match(pattern)) {
       this.msg = 'Password must be a minimum of 5 characters';
       // this.msg =
@@ -229,13 +233,17 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     // if (!this.profileImg?.file?.name) {
     //   this.msg = 'Please upload profile picture';
     //   this.scrollTop();
-    //   // return false;
+    // return false;
     // }
     // this.profileImg?.file?.name &&
+    // && this.registerForm.get('Anonymous').value === true
     if (
       this.registerForm.valid &&
-      this.registerForm.get('TermAndPolicy').value === true
+      this.registerForm.get('TermAndPolicy').value === true 
     ) {
+      if (!this.validateEmail()) {
+        return;
+      }
       if (!this.validatepassword()) {
         return;
       }
@@ -243,7 +251,6 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     } else {
       this.msg = 'Please enter mandatory fields(*) data.';
       this.scrollTop();
-      // return false;
     }
   }
 
@@ -261,6 +268,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       next: (result) => {
         this.spinner.hide();
         this.allCountryData = result;
+        this.registerForm.get('Zip').enable();
         this.getAllState(this.defaultCountry);
       },
       error: (error) => {
@@ -269,6 +277,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       },
     });
   }
+
   onCountryChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     this.getAllState(target.value);
@@ -280,6 +289,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       next: (result) => {
         this.spinner.hide();
         this.allStateData = result;
+        this.registerForm.get('State').setValue(result[0]?.state);
       },
       error: (error) => {
         this.spinner.hide();
@@ -304,7 +314,8 @@ export class SignUpComponent implements OnInit, AfterViewInit {
   //             City: zipData.city,
   //             County: zipData.places,
   //           });
-  //         } else {
+  //         }
+  //          else {
   //           this.registerForm.get('State').disable();
   //           this.registerForm.get('City').disable();
   //           this.registerForm.get('County').disable();
@@ -325,7 +336,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     this.msg = '';
   }
 
-  creatProfile(data) {
+  createProfile(data) {
     this.spinner.show();
     const profile = {
       Username: data?.Username,
@@ -342,7 +353,6 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       IsActive: 'N',
       ProfilePicName: this.profilePic || null,
     };
-    console.log(profile);
 
     this.customerService.createProfile(profile).subscribe({
       next: (data: any) => {
@@ -379,7 +389,9 @@ export class SignUpComponent implements OnInit, AfterViewInit {
   onChangeTag(event) {
     this.registerForm
       .get('Username')
-      .setValue(event.target.value.replaceAll(' ', ''));
+      .setValue(
+        event.target.value.replaceAll(' ', '').replaceAll(/\s*,+\s*/g, ',')
+      );
   }
 
   convertToUppercase(event: any) {
@@ -387,5 +399,18 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     let inputValue = inputElement.value;
     inputValue = inputValue.replace(/\s/g, '');
     inputElement.value = inputValue.toUpperCase();
+  }
+
+  onClick(event: MouseEvent): void {
+    event.preventDefault();
+    let listener = (e: ClipboardEvent) => {
+      let clipboard = e.clipboardData || window["clipboardData"];
+      clipboard.setData("text", 'support@christian.tube');
+      e.preventDefault();
+      this.toastService.success('Email address copied');
+    };
+    document.addEventListener("copy", listener, false)
+    document.execCommand("copy");
+    document.removeEventListener("copy", listener, false);
   }
 }

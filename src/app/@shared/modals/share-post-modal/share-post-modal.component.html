@@ -44,10 +44,10 @@
 
   <button
     type="button"
-    class="btn btn-sm btn-secondary"
+    class="btn btn-sm btn-success"
     (click)="submit()"
-    [disabled]="!sharePostData.parentPostId"
-    >
+    [disabled]="!sharePostData?.parentPostId"
+  >
     {{ confirmButtonLabel }}
   </button>
 </div>

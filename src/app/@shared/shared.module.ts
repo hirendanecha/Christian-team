@@ -1,15 +1,18 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, IMAGE_CONFIG } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmationModalComponent } from './modals/confirmation-modal/confirmation-modal.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { RouterModule } from '@angular/router';
 import { PostListComponent } from './components/post-list/post-list.component';
 import { PostCardComponent } from './components/post-card/post-card.component';
+import { ImgPickerComponent } from './components/img-picker/img-picker.component';
 import { CommunityCardComponent } from './components/community-card/community-card.component';
 import { RightSidebarComponent } from '../layouts/main-layout/components/right-sidebar/right-sidebar.component';
+import { PostMetaDataCardComponent } from './components/post-meta-data-card/post-meta-data-card.component';
 import { NgxTrimDirectiveModule } from 'ngx-trim-directive';
 import { TagUserInputComponent } from './components/tag-user-input/tag-user-input.component';
+import { ImgPreviewComponent } from './components/img-preview/img-preview.component';
 import { InlineLoaderComponent } from './components/inline-loader/inline-loader.component';
 import { LAZYLOAD_IMAGE_HOOKS, ScrollHooks } from 'ng-lazyload-image';
 import { CopyClipboardDirective } from './directives/copy-clipboard.directive';
@@ -65,9 +68,11 @@ import {
   faCheck,
   faSquareCheck,
   faSquareXmark,
+  faUpload,
   faFileUpload,
   faFile,
   faFilePdf,
+  faShareNodes,
   faShare,
   faHouseMedical,
   faStethoscope,
@@ -139,27 +144,29 @@ import { IncomingcallModalComponent } from './modals/incoming-call-modal/incomin
 import { OutGoingCallModalComponent } from './modals/outgoing-call-modal/outgoing-call-modal.component';
 import { CreateGroupModalComponent } from './modals/create-group-modal/create-group-modal.component';
 import { EditGroupModalComponent } from './modals/edit-group-modal/edit-group-modal.component';
-import { ForwardChatModalComponent } from './modals/forward-chat-modal/forward-chat-modal.component';
-import { AppQrModalComponent } from './modals/app-qr-modal/app-qr-modal.component';
 import { MediaGalleryComponent } from './components/media-gallery/media-gallery.component';
 import { GalleryImgPreviewComponent } from './components/gallery-img-preview/gallery-img-preview.component';
 import { QRCodeModule } from 'angularx-qrcode';
-import { ImgPreviewComponent } from './components/img-preview/img-preview.component';
-import { PostMetaDataCardComponent } from './components/post-meta-data-card/post-meta-data-card.component';
-import { ImgPickerComponent } from './components/img-picker/img-picker.component';
-import { HealthPraatitionerCardComponent } from './components/health-partitioner-card/health-partitioner-card.component';
-import { HoverDropdownDirective } from './directives/hover-dropdown.directive';
+import { AppQrModalComponent } from './modals/app-qr-modal/app-qr-modal.component';
+import { ForwardChatModalComponent } from './modals/forward-chat-modal/forward-chat-modal.component';
 import { ImgLayoutComponent } from './components/img-layout/img-layout.component';
+import { HoverDropdownDirective } from './directives/hover-dropdown.directive';
+import { InvitePeopleForChatModalComponent } from './modals/invite-people-for-chat/invite-people-for-chat-modal.component';
+import { HealthPraatitionerCardComponent } from './components/health-partitioner-card/health-partitioner-card.component';
 
 const sharedComponents = [
   ConfirmationModalComponent,
   PostListComponent,
   PostCardComponent,
+  ImgPickerComponent,
   CommunityCardComponent,
   RightSidebarComponent,
+  PostMetaDataCardComponent,
   TagUserInputComponent,
+  ImgPreviewComponent,
   InlineLoaderComponent,
   CopyClipboardDirective,
+  HoverDropdownDirective,
   ClaimTokenModalComponent,
   WalletLinkComponent,
   ReplyCommentModalComponent,
@@ -186,6 +193,7 @@ const sharedComponents = [
   HealthPraatitionerCardComponent,
   HoverDropdownDirective,
   ImgLayoutComponent,
+  InvitePeopleForChatModalComponent,
 ];
 
 const sharedModules = [
@@ -203,17 +211,23 @@ const sharedModules = [
   PipeModule,
   MentionModule,
   QRCodeModule,
-  // PdfViewerModule
 ];
 
 @NgModule({
-  declarations: [sharedComponents],
   imports: [sharedModules],
+  declarations: [sharedComponents],
   exports: [...sharedModules, ...sharedComponents],
   providers: [
     NgbActiveModal,
     NgbActiveOffcanvas,
     { provide: LAZYLOAD_IMAGE_HOOKS, useClass: ScrollHooks },
+    {
+      provide: IMAGE_CONFIG,
+      useValue: {
+        disableImageSizeWarning: true, 
+        disableImageLazyLoadWarning: true
+      }
+    },
   ],
 })
 export class SharedModule {
@@ -322,7 +336,9 @@ export class SharedModule {
       faEyeSlash,
       faSquarePlus,
       faSignIn,
-      faSignOut
+      faSignOut,
+      faShareNodes,
+      faUpload,
     );
   }
 }

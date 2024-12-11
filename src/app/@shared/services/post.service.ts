@@ -90,7 +90,6 @@ export class PostService {
     return this.http.get<Object>(`${this.baseUrl}/get-pdfs/${id}?q=${Date.now()}`);
   }
 
-
   uploadFile(files: File[], params?: any): Observable<HttpEvent<any>> {
     const url = `${environment.serverUrl}posts/upload`;
     const formData: FormData = new FormData();

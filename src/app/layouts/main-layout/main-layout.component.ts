@@ -30,31 +30,32 @@ export class MainLayoutComponent {
   ) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd || event instanceof Scroll),
-      map(() => {
-        let child = this.route.firstChild;
+        map(() => {
+          let child = this.route.firstChild;
 
-        while (child) {
-          if (child.firstChild) {
-            child = child.firstChild;
-          } else if (Object.keys(child?.snapshot?.data)?.length > 0) {
-            return child.snapshot.data;
-          } else {
-            return {};
+          while (child) {
+            if (child.firstChild) {
+              child = child.firstChild;
+            } else if (Object.keys(child?.snapshot?.data)?.length > 0) {
+              return child.snapshot.data;
+            } else {
+              return {};
+            }
           }
-        }
 
-        return {};
+          return {};
       }),
     ).subscribe((data: any) => {
-      this.sidebar = data;
-    });
+        this.sidebar = data;
+      });
+
   }
 
   openLeftSidebar() {
 		this.offcanvasService.open(this.sidebar?.isShowResearchLeftSideBar ? ResearchSidebarComponent : LeftSidebarComponent, { position: 'start', panelClass: 'w-300-px' });
-	}
+  }
 
   openRightSidebar() {
 		this.offcanvasService.open(RightSidebarComponent, { position: 'end', panelClass: 'w-300-px' });
-	}
+  }
 }

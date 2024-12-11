@@ -1,16 +1,16 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ name: 'truncate' })
+@Pipe({name: 'truncate'})
 export class TruncatePipe implements PipeTransform {
   transform(value: string, limit: number): string {
-    if (limit === -1 || value.length <= limit) {
+    if (limit === -1 || value?.length <= limit) {
       return value;
     }
-    return value.substring(0, limit) + '...';
+    return value?.substring(0, limit) + '...';
   }
 }
 @Pipe({
-  name: 'stripHtml',
+  name: 'stripHtml'
 })
 export class StripHtmlPipe implements PipeTransform {
   transform(value: string): string {
@@ -20,16 +20,20 @@ export class StripHtmlPipe implements PipeTransform {
       if (node.nodeType === Node.ELEMENT_NODE) {
         const element = node as HTMLElement;
         const tagName = element.tagName.toLowerCase();
+        if (tagName === 'br') {
+          return '<br>';
+        }
         if (tagName === 'a' && element.hasAttribute('data-id')) {
           return element.outerHTML;
         }
-        const childContent = Array.from(element.childNodes)
-          .map(processNode)
-          .join('');
-        if (
-          element.childNodes.length === 1 &&
-          element.firstChild?.nodeType === Node.ELEMENT_NODE
-        ) {
+        if (tagName === 'img' && element.hasAttribute('src')) {
+          const src = element.getAttribute('src');
+          const width = element.getAttribute('width');
+          const height = element.getAttribute('height');
+          return `<img src="${src}"${width ? ` width="${width}"` : ''}${height ? ` height="${height}"` : ''}>`;
+        }
+        const childContent = Array.from(element.childNodes).map(processNode).join('');
+        if (element.childNodes.length === 1 && element.firstChild?.nodeType === Node.ELEMENT_NODE) {
           const firstChildElement = element.firstChild as HTMLElement;
           if (firstChildElement.tagName.toLowerCase() === tagName) {
             return childContent;
@@ -44,4 +48,26 @@ export class StripHtmlPipe implements PipeTransform {
     const result = processNode(div);
     return result;
   }
+  // transform(value: string): string {
+  //   return `${value}`
+  //     .replace(/<div[^>]*>\s*/gi, '<div>')
+  //     .replace(/<br[^>]*>\s*/gi, '<br>')
+  //     .replace(/(<br\s*\/?>\s*){2,}/gi, '<br>')
+  //     .replace(/(?:<div><br><\/div>\s*)+/gi, '<div><br></div>')
+  //     .replace(/<a\s+([^>]*?)>/gi, (match, p1) => {
+  //       const hrefMatch = p1.match(/\bhref=["'][^"']*["']/);
+  //       const classMatch = p1.match(/\bclass=["'][^"']*["']/);
+  //       const dataIdMatch = p1.match(/\bdata-id=["'][^"']*["']/);
+  //       let allowedAttrs = '';
+  //       if (hrefMatch) allowedAttrs += ` ${hrefMatch[0]}`;
+  //       if (classMatch) allowedAttrs += ` ${classMatch[0]}`;
+  //       if (dataIdMatch) allowedAttrs += ` ${dataIdMatch[0]}`;
+  //       return `<a${allowedAttrs}>`;
+  //     })
+  //     .replace(/<\/?[^>]+(>|$)/gi, (match) => {
+  //       return /<\/?(a|br|div)(\s+[^>]*)?>/i.test(match) ? match : '';
+  //     })
+  //     .replace(/^(?:&nbsp;|\s)+/g, '')
+  //     .trim();
+  // }
 }

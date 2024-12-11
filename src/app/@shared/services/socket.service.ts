@@ -111,6 +111,10 @@ export class SocketService {
     this.socket?.emit('get-meta', params);
   }
 
+  delePosts(params) {
+    this.socket?.emit('deletePost', params);
+  }
+
   // socket for chat
 
   getChatList(params, callback: (data: any) => void) {

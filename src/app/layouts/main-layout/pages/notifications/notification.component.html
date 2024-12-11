@@ -1,14 +1,46 @@
-<div class="head-area mb-6 text-start">
-  <h5>Notifications</h5>
+<div
+  class="head-area text-start d-flex justify-content-between align-items-center"
+>
+  <div>
+    <h5>Notifications</h5>
+  </div>
+  <div class="btn-group cus-dropdown d-flex gap-3">
+    <div ngbDropdown class="d-inline-block">
+      <button class="dropdown-btn" ngbDropdownToggle>
+        <fa-icon [icon]="['fas', 'ellipsis']" class="font-24-px" />
+      </button>
+      <div ngbDropdownMenu class="dropdown-menu">
+        <button ngbDropdownItem>
+          <a class="droplist d-flex align-items-center gap-2"
+          (click)="readAllNotifications()"
+          >
+            <fa-icon [icon]="['fas', 'square-check']" />
+            <span>Mark all as read</span>
+          </a>
+        </button>
+        <button ngbDropdownItem>
+          <a class="droplist d-flex align-items-center gap-2"
+          (click)="deleteAllNotifications()"
+          >
+            <fa-icon [icon]="['fas', 'trash-can']" />
+            <span>Delete All</span>
+          </a>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="single-box">
   <ng-container *ngIf="notificationList.length > 0">
     <ng-container *ngFor="let notification of notificationList">
       <div
-        class="notification-single d-center p-5 gap-5 justify-content-between"
+        class="notification-single d-center p-5 gap-5 justify-content-between cursor"
       >
         <a
-          [routerLink]=" notification?.postId === null ? '/profile-chats' : '/post/' + notification?.postId"
+          (click)="selectMessaging(notification)"
+          [routerLink]="
+            notification.postId ? '/post/' + notification.postId : null
+          "
         >
           <div class="d-flex top-review-wrapper gap-3 align-items-center">
             <div class="avatar-item">
@@ -16,7 +48,8 @@
                 class="avatar-img w-48-px h-48-px rounded-3"
                 loading="lazy"
                 data-src="{{
-                notification?.ProfilePicName || '/assets/images/avtar/placeholder-user.png'
+                  notification?.ProfilePicName ||
+                    '/assets/images/avtar/placeholder-user.png'
                 }}"
                 onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
                 alt="avatar"
@@ -24,16 +57,16 @@
             </div>
             <div class="single-item notification-area text-area text-start">
               <h6 class="m-0 mb-1">
-                <a class="cursor" (click)="viewUserPost(notification.postId)">{{
-                  notification?.Username
-                }}</a>
+                <a>{{ notification?.Username }}</a>
                 <span class="ms-1">{{ notification?.notificationDesc }} </span>
                 <span
                   *ngIf="notification.isRead === 'N'"
                   class="unread-notification smtxt"
                 ></span>
               </h6>
-            <span class="mdtxt time-schedule">{{ notification.createDate | dateDay }}</span>
+              <span class="mdtxt time-schedule">{{
+                notification.createDate | dateDay
+              }}</span>
             </div>
           </div>
         </a>
@@ -86,6 +119,6 @@
   </ng-container>
 
   <ng-container *ngIf="notificationList.length === 0">
-    <span> No notifications!</span>
+    <span class="p-3"> No notifications!</span>
   </ng-container>
 </div>

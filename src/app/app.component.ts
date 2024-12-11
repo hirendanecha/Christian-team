@@ -103,18 +103,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           if (
             data.actionType === 'EC' &&
             data.notificationByProfileId !== this.profileId &&
-            sessionStorage.getItem('callId')
+            localStorage.getItem('callId')
           ) {
             this.sharedService.callId = null;
-            sessionStorage.removeItem('callId');
+            localStorage.removeItem('callId');
             const endCall = {
               profileId: this.profileId,
               roomId: data.roomId,
             };
             this.socketService?.endCall(endCall);
+            this.router.navigate(['/profile-chats']);
           }
-          const userData = this.tokenService.getUser();
-          this.sharedService.getLoginUserDetails(userData);
+          // const userData = this.tokenService.getUser();
+          // this.sharedService.getLoginUserDetails(userData);
           this.sharedService.loginUserInfo.subscribe((user) => {
             this.tagNotificationSound =
               user.tagNotificationSound === 'Y' || false;
@@ -122,7 +123,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               user.messageNotificationSound === 'Y' || false;
           });
           if (data?.notificationByProfileId !== this.profileId) {
-            this.sharedService.isNotify = true;
+            this.sharedService.setNotify(true);
+            // this.sharedService.isNotify = true;
             this.originalFavicon.href = '/assets/images/icon-unread.jpg';
           }
           this.soundControlService.soundEnabled$.subscribe((soundEnabled) => {
@@ -189,6 +191,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             data?.actionType === 'SC' &&
             data?.notificationByProfileId !== this.profileId
           ) {
+            this.sharedService.setNotify(false);
             if (!this.currentURL.includes(data?.link)) {
               this.currentURL.push(data.link);
               this.modalService.dismissAll();
@@ -227,7 +230,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       const isRead = localStorage.getItem('isRead');
       if (isRead === 'N') {
-        this.sharedService.isNotify = true;
+        // this.sharedService.isNotify = true;
+        this.sharedService.setNotify(true);
+        this.originalFavicon.href = '/assets/images/icon-unread.jpg';
       }
     }
   }
@@ -281,6 +286,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   logout(): void {
+    // this.isCollapsed = true;
     this.socketService?.socket?.emit('offline', (data) => {
       return;
     });
@@ -290,6 +296,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           this.sharedService.onlineUserList.push(ele.userId);
         }
       });
+      // this.onlineUserList = data;
     });
     this.customerService.logout().subscribe({
       next: (res) => {
@@ -303,6 +310,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       },
     });
+    // this.toastService.success('Logout successfully');
+    // this.router.navigate(['/auth']);
+    // this.isDomain = false;
   }
 
   ngOnDestroy(): void {

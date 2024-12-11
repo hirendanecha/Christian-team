@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import {
   NgbDropdown,
   NgbModal,
@@ -16,6 +16,10 @@ import { LeftSidebarComponent } from '../../components/left-sidebar/left-sidebar
 import { environment } from 'src/environments/environment';
 import { TokenStorageService } from 'src/app/@shared/services/token-storage.service';
 import { SocketService } from 'src/app/@shared/services/socket.service';
+import { IncomingcallModalComponent } from 'src/app/@shared/modals/incoming-call-modal/incoming-call-modal.component';
+import { SoundControlService } from 'src/app/@shared/services/sound-control.service';
+import { Howl } from 'howler';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -48,6 +52,8 @@ export class HeaderComponent {
   hideSubHeader: boolean = false;
   hideOngoingCallButton: boolean = false;
   authToken = localStorage.getItem('auth-token');
+  showUserGuideBtn: boolean = false;
+  private subscription: Subscription;
   constructor(
     private modalService: NgbModal,
     public sharedService: SharedService,
@@ -56,29 +62,97 @@ export class HeaderComponent {
     public breakpointService: BreakpointService,
     private offcanvasService: NgbOffcanvas,
     public tokenService: TokenStorageService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private soundControlService: SoundControlService
   ) {
     this.originalFavicon = document.querySelector('link[rel="icon"]');
+    this.subscription = this.sharedService.isNotify$.subscribe(
+      (value) => (this.sharedService.isNotify = value)
+    );
     this.socketService?.socket?.on('isReadNotification_ack', (data) => {
       if (data?.profileId) {
-        this.sharedService.isNotify = false;
+        // this.sharedService.isNotify = false;
+        this.sharedService.setNotify(false);
         localStorage.setItem('isRead', data?.isRead);
-          this.originalFavicon.href = '/assets/images/avtar/placeholder-user.png';
+        this.originalFavicon.href = '/assets/images/icon.jpg';
       }
     });
     const isRead = localStorage.getItem('isRead');
     if (isRead === 'N') {
-      this.sharedService.isNotify = true;
+      // this.sharedService.isNotify = true;
+      this.sharedService.setNotify(true);
     } else {
-      this.sharedService.isNotify = false;
+      // this.sharedService.isNotify = false;
+      this.sharedService.setNotify(false);
     }
     this.channelId = +localStorage.getItem('channelId');
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.hideSubHeader = this.router.url.includes('profile-chats');
-        this.hideOngoingCallButton = this.router.url.includes('facetime');
-        this.sharedService.callId = sessionStorage.getItem('callId') || null;
+        const currentUrl = this.router.url;
+        const profileId = +localStorage.getItem('profileId') || null;
+
+        this.hideSubHeader =
+          currentUrl.includes('profile-chats') ||
+          currentUrl.includes('facetime');
+        this.showUserGuideBtn = currentUrl.includes('home');
+        this.hideOngoingCallButton = currentUrl.includes('facetime');
+        this.sharedService.callId = localStorage.getItem('callId') || null;
+
+        if (!profileId) return;
+
+        const reqObj = { profileId };
+        this.socketService?.checkCall(reqObj, (data: any) => {
+          const isOnCall = data?.isOnCall === 'Y';
+          const hasCallLink = data?.callLink;
+
+          if (isOnCall && hasCallLink && !this.sharedService.callId) {
+            if (!this.hideOngoingCallButton) {
+              const callSound = new Howl({
+                src: [
+                  'https://s3.us-east-1.wasabisys.com/freedom-social/famous_ringtone.mp3',
+                ],
+                loop: true,
+              });
+              this.soundControlService.initTabId();
+
+              const modalRef = this.modalService.open(
+                IncomingcallModalComponent,
+                {
+                  centered: true,
+                  size: 'sm',
+                  backdrop: 'static',
+                }
+              );
+
+              const callData = {
+                Username: '',
+                link: data.callLink,
+                roomId: data.roomId,
+                groupId: data.groupId,
+                ProfilePicName: this.sharedService?.userData?.ProfilePicName,
+              };
+
+              modalRef.componentInstance.calldata = callData;
+              modalRef.componentInstance.sound = callSound;
+              modalRef.componentInstance.showCloseButton = true;
+              modalRef.componentInstance.title = 'Join existing call...';
+
+              modalRef.result.then((res) => {
+                if (res === 'cancel') {
+                  const callLogData = {
+                    profileId,
+                    roomId: callData?.roomId,
+                    groupId: callData?.groupId,
+                  };
+                  this.socketService?.endCall(callLogData);
+                }
+              });
+            }
+          } else {
+            this.hideOngoingCallButton = true;
+          }
+        });
       }
     });
   }
@@ -104,13 +178,12 @@ export class HeaderComponent {
   }
 
   openProfileMobileMenuModal(): void {
-    if(this.tokenService.getCredentials()){
+    if (this.tokenService.getCredentials()) {
       this.offcanvasService.open(ProfileMenusModalComponent, {
         position: 'start',
         panelClass: 'w-300-px',
       });
-    } 
-    else{
+    } else {
       this.openRightSidebar();
     }
   }
@@ -180,10 +253,19 @@ export class HeaderComponent {
 
   redirectToTube(): void {
     const channelId = +localStorage.getItem('channelId');
+    let redirectUrl = `${environment.tubeUrl}`;
     if (channelId) {
-      window.open(`${environment.tubeUrl}?channelId=${channelId}`, '_blank');
-    } else {
-      window.open(`${environment.tubeUrl}`, '_blank');
+      redirectUrl += `?channelId=${channelId}`;
     }
+    if (this.authToken) {
+      redirectUrl += channelId
+        ? `&authToken=${this.authToken}`
+        : `?authToken=${this.authToken}`;
+    }
+    window.open(redirectUrl, '_blank');
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

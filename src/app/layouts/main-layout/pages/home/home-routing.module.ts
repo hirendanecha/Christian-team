@@ -17,8 +17,7 @@ const routes: Routes = [
   {
     path: 'my-church/details/:name',
     component: HomeComponent,
-    // canActivate: mapToCanActivate([AuthenticationGuard]),
-   
+    // canActivate: mapToCanActivate([AuthenticationGuard])
   },
   {
     path: 'pages/:name',
@@ -35,4 +34,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class HomeRoutingModule { }
+export class HomeRoutingModule {}

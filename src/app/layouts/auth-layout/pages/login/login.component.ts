@@ -1,9 +1,9 @@
 import {
   AfterViewInit,
   Component,
+  ElementRef,
   OnInit,
   ViewChild,
-  ElementRef,
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
@@ -19,6 +19,7 @@ import { environment } from 'src/environments/environment';
 import { CustomerService } from 'src/app/@shared/services/customer.service';
 import { SeoService } from 'src/app/@shared/services/seo.service';
 import { SocketService } from 'src/app/@shared/services/socket.service';
+
 declare var turnstile: any;
 
 @Component({
@@ -38,7 +39,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
   msg = '';
   type = 'danger';
   theme = '';
-  captchaToken = '';
   passwordHidden: boolean = true;
   @ViewChild('captcha', { static: false }) captchaElement: ElementRef;
   constructor(
@@ -54,14 +54,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private customerService: CustomerService,
     private tokenStorageService: TokenStorageService,
     private seoService: SeoService,
-    private socketService: SocketService,
+    private socketService: SocketService
   ) {
     const isVerify = this.route.snapshot.queryParams.isVerify;
     if (isVerify === 'false') {
       this.msg =
         'Please check your email and click the activation link to activate your account.';
       this.type = 'success';
-      // this.toastService.success(this.msg);
     } else if (isVerify === 'true') {
       this.msg = 'Account activated';
       this.type = 'success';
@@ -72,7 +71,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
       description: 'login page',
       image: `${environment.webUrl}assets/images/landingpage/placeholder-user.png`,
     };
-    // this.seoService.updateSeoMetaData(data);
+    this.theme = localStorage.getItem('theme');
   }
 
   ngOnInit(): void {
@@ -88,7 +87,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.loadCloudFlareWidget();
+    // this.loadCloudFlareWidget();
   }
 
   loadCloudFlareWidget() {
@@ -97,8 +96,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
       theme: this.theme === 'dark' ? 'light' : 'dark',
       callback: function (token) {
         localStorage.setItem('captcha-token', token);
-        this.captchaToken=token;
-        console.log(`Challenge Success ${token}`);
         if (!token) {
           this.msg = 'invalid captcha kindly try again!';
           this.type = 'danger';
@@ -108,72 +105,81 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   togglePasswordVisibility(passwordInput: HTMLInputElement) {
-    passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    passwordInput.type =
+      passwordInput.type === 'password' ? 'text' : 'password';
     this.passwordHidden = !this.passwordHidden;
   }
+
   onSubmit(): void {
-    this.spinner.show();
-    const token = localStorage.getItem('captcha-token');
-    if (!token) {
-      this.spinner.hide();
-      this.msg = 'Invalid captcha kindly try again!';
-      this.type = 'danger';
-      // return;
-    }
-    this.authService.customerlogin(this.loginForm.value).subscribe({
-      next: (data: any) => {
-        this.spinner.hide();
-        if (!data.error) {
-          this.tokenStorage.saveToken(data?.accessToken);
-          this.tokenStorage.saveUser(data.user);
-          localStorage.setItem('profileId', data.user.profileId);
-          localStorage.setItem('communityId', data.user.communityId);
-          localStorage.setItem('channelId', data.user?.channelId);
-          localStorage.setItem('email', data.user?.Email);
-          window.localStorage.user_id = data.user.Id;
-          this.sharedService.getUserDetails();
-          this.isLoginFailed = false;
-          this.isLoggedIn = true;
-          this.socketService.connect();
-          this.toastService.success('Logged in successfully');
-          this.router.navigate([`/home`]);
-        } else {
-          this.loginMessage = data.mesaage;
+    // const token = localStorage.getItem('captcha-token');
+    // if (!token) {
+    //   this.msg = 'Invalid captcha kindly try again!';
+    //   this.type = 'danger';
+    //   return;
+    // }
+    if (this.loginForm.valid) {
+      this.spinner.show();
+      this.authService.customerlogin(this.loginForm.value).subscribe({
+        next: (data: any) => {
           this.spinner.hide();
-          this.errorMessage =
-            'Invalid Email and Password. Kindly try again !!!!';
-          this.isLoginFailed = true;
+          if (!data.error) {
+            this.tokenStorage.saveToken(data?.accessToken);
+            // this.tokenStorage.saveUser(data.user);
+            localStorage.setItem('profileId', data.user.profileId);
+            localStorage.setItem('communityId', data.user.communityId);
+            localStorage.setItem('channelId', data.user?.channelId);
+            this.sharedService.getUserDetails();
+            this.isLoginFailed = false;
+            this.isLoggedIn = true;
+            this.socketService.connect();
+            this.socketService.socket?.emit('online-users');
+            this.socketService?.socket?.on('get-users', (data) => {
+              data.map((ele) => {
+                if (!this.sharedService.onlineUserList.includes(ele.userId)) {
+                  this.sharedService.onlineUserList.push(ele.userId);
+                }
+              });
+              // this.onlineUserList = data;
+            });
+            // Redirect to a new page after reload
+            this.toastService.success('Logged in successfully');
+            this.setCookiesForTube();
+            window.location.reload();
+            this.router.navigate([`/home`]);
+          } else {
+            this.loginMessage = data.mesaage;
+            this.spinner.hide();
+            this.errorMessage =
+              'Invalid Email and Password. Kindly try again !!!!';
+            this.isLoginFailed = true;
+            // this.toastService.danger(this.errorMessage);
+          }
+        },
+        error: (err) => {
+          this.spinner.hide();
+          console.log(err.error);
+          this.errorMessage = err.error.message; //err.error.message;
           // this.toastService.danger(this.errorMessage);
-        }
-      },
-      error: (err) => {
-        this.spinner.hide();
-        console.log(err.error);
-        this.errorMessage = err.error.message; //err.error.message;
-        // this.toastService.danger(this.errorMessage);
-        this.isLoginFailed = true;
-        this.errorCode = err.error.errorCode;
-      }
-    });
+          this.isLoginFailed = true;
+          this.errorCode = err.error.errorCode;
+        },
+      });
+    }
   }
 
   resend() {
     this.authService
       .userVerificationResend({ username: this.loginForm.value.login_email })
-      .subscribe(
-        {
-          next: (result: any) => {
-            this.msg = result.message;
-            // this.toastService.success(this.msg);
-            this.type = 'success';
-          },
-          error:
-            (error) => {
-              this.msg = error.message;
-              // this.toastService.danger(this.msg);
-              this.type = 'danger';
-            }
-        });
+      .subscribe({
+        next: (result: any) => {
+          this.msg = result.message;
+          this.type = 'success';
+        },
+        error: (error) => {
+          this.msg = error.message;
+          this.type = 'danger';
+        },
+      });
   }
 
   forgotPasswordOpen() {
@@ -185,11 +191,34 @@ export class LoginComponent implements OnInit, AfterViewInit {
     modalRef.componentInstance.cancelButtonLabel = 'Cancel';
     modalRef.componentInstance.confirmButtonLabel = 'Submit';
     modalRef.componentInstance.closeIcon = true;
-    modalRef.result.then(res => {
+    modalRef.result.then((res) => {
       if (res === 'success') {
-        this.msg = 'If the entered email exists you will receive a email to change your password.'
-        this.type = 'success'
+        this.msg =
+          'If the entered email exists you will receive a email to change your password.';
+        this.type = 'success';
       }
     });
+  }
+
+  setCookiesForTube() {
+    const authToken = localStorage.getItem('auth-token');
+    if (authToken) {
+      // const cookieValue = `authToken=${authToken}; path=/; secure; samesite=None; max-age=86400`; // expires in 1 day
+      const cookieValue = `authToken=${authToken}; domain=.christian.tube; path=/; secure; samesite=None; max-age=2592000`; //expires in 1 month
+      document.cookie = cookieValue;
+    }
+  }
+
+  onClick(event: MouseEvent): void {
+    event.preventDefault();
+    let listener = (e: ClipboardEvent) => {
+      let clipboard = e.clipboardData || window["clipboardData"];
+      clipboard.setData("text", 'support@christian.tube');
+      e.preventDefault();
+      this.toastService.success('Email address copied');
+    };
+    document.addEventListener("copy", listener, false)
+    document.execCommand("copy");
+    document.removeEventListener("copy", listener, false);
   }
 }

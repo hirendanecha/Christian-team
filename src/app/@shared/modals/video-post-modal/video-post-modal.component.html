@@ -97,7 +97,7 @@
             type="file"
             id="fileInput"
             (change)="onSelectedVideo($event)"
-            accept="video/mp4*"
+            accept="video/*"
           />
         </div>
         <div *ngIf="selectedVideoFile">
@@ -148,7 +148,7 @@
 
     <button
       type="button"
-      class="btn btn-sm btn-secondary"
+      class="btn btn-sm btn-success"
       (click)="uploadImgAndSubmit()"
     >
       {{ confirmButtonLabel }}

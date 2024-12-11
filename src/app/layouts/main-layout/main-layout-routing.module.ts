@@ -14,14 +14,14 @@ const routes: Routes = [
         loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
         data: {
           isShowLeftSideBar: true,
-          isShowRightSideBar: true
-        }
+          isShowRightSideBar: true,
+        },
       },
       {
         path: 'my-church',
         loadChildren: () => import('./pages/communities/communities.module').then((m) => m.CommunitiesModule),
         data: {
-          isShowLeftSideBar: true
+          isShowLeftSideBar: true,
         },
         canActivate: mapToCanActivate([AuthenticationGuard]),
       },
@@ -29,7 +29,7 @@ const routes: Routes = [
         path: 'pages',
         loadChildren: () => import('./pages/freedom-page/freedom-page.module').then((m) => m.FreedomPageModule),
         data: {
-          isShowLeftSideBar: true
+          isShowLeftSideBar: true,
         },
         canActivate: mapToCanActivate([AuthenticationGuard]),
       },
@@ -37,7 +37,7 @@ const routes: Routes = [
         path: 'settings',
         loadChildren: () => import('./pages/settings/settings.module').then((m) => m.SettingsModule),
         data: {
-          isShowLeftSideBar: true
+          isShowLeftSideBar: true,
         },
         canActivate: mapToCanActivate([AuthenticationGuard]),
       },
@@ -45,7 +45,7 @@ const routes: Routes = [
         path: 'notifications',
         loadChildren: () => import('./pages/notifications/notification.module').then((m) => m.NotificationsModule),
         data: {
-          isShowLeftSideBar: true
+          isShowLeftSideBar: true,
         },
         canActivate: mapToCanActivate([AuthenticationGuard]),
       },
@@ -94,8 +94,9 @@ const routes: Routes = [
           isShowChatListSideBar: false,
           isShowChatModule: true
         },
+        // canActivate: mapToCanActivate([AuthenticationGuard]),
       },
-    ]
+    ],
   },
 ];
 
@@ -103,4 +104,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class MainLayoutRoutingModule { }
+export class MainLayoutRoutingModule {}

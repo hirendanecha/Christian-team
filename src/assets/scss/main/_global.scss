@@ -34,6 +34,8 @@
   --post-border-color: #2b3b58;
   --input-field: #ffff;
   --input-text: #000000;
+  --ongoing-call: #5cb85c;
+  --link-color: #0085ff;
 }
 
 .dark-ui {
@@ -66,6 +68,8 @@
   --post-border-color: #f3f3f3;
   --input-field: #ffff;
   --input-text: #000000;
+  --ongoing-call: #5cb85c;
+  --link-color: #ffffff;
 }
 .cursor {
   cursor: pointer;
@@ -341,7 +345,7 @@ option {
   font-family: var(--body-font) !important;
   color: var(--para-2nd-color);
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 400;
   overflow-wrap: anywhere;
 }
 
@@ -446,11 +450,11 @@ li {
   margin-top: -7px;
 }
 .mdtxt {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 22px;
 }
 .smtxt {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 21px;
 }
 
@@ -685,18 +689,18 @@ li {
     }
   }
   &.alt {
-    background: #ffd3c6 !important;
-    color: #ff4747 !important;
+    background: #ffd3c6;
+    color: #ff4747;
     i,
     span {
       color: #ff4747;
     }
     &:hover {
-      background: #f44c4c !important;
-      color: var(--bs-white) !important;
+      background: #f44c4c;
+      color: var(--bs-white);
       i,
       span {
-        color: var(--bs-white) !important;
+        color: var(--bs-white);
       }
     }
   }
@@ -1102,6 +1106,14 @@ li {
   100% {
     transform: translate(0px, 0px);
   }
+}
+
+.jw-state-idle .jw-controls {
+  background: unset !important;
+}
+
+.jw-controls-backdrop {
+  background: unset !important;
 }
 
 ::-webkit-scrollbar {

@@ -29,7 +29,6 @@ export class EditPostModalComponent implements AfterViewInit {
     file: null,
     url: '',
     tags: [],
-    imagesList: [],
   };
 
   postInputValue: string = '';
@@ -97,7 +96,7 @@ export class EditPostModalComponent implements AfterViewInit {
     }
     let existingFileType = '';
     if (this.combinedMediaData.length > 0) {
-      existingFileType = this.combinedMediaData[0]?.file?.type?.split('/')[0];
+      existingFileType = this.combinedMediaData[0]?.file?.type.split('/')[0];
     }
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -125,10 +124,8 @@ export class EditPostModalComponent implements AfterViewInit {
         fileData.imageUrl = URL.createObjectURL(file);
       }
       this.selectedFiles.push(fileData);
-      // console.log(`File ${i + 1}:`, fileData);
     }
     this.editMediaData = (this.editMediaData || []).concat(this.selectedFiles);
-    // console.log('Selected files:', this.postMediaData);
   }
 
   removePostSelectedFile(media: any = {}, type: string): void {
@@ -144,12 +141,10 @@ export class EditPostModalComponent implements AfterViewInit {
         this.postMediaData = this.postMediaData.filter(
           (ele) => ele.id != media.id
         );
-        console.log(this.removeImagesList);
       } else {
         this.editMediaData = this.editMediaData.filter(
           (ele: any) => ele?.file?.name != media?.file?.name
         );
-        console.log(this.editMediaData);
       }
     }
   }

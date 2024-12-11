@@ -1,18 +1,30 @@
-<div class="row mt-8 login-content">
-  <div class="col-lg-6 d-lg-flex d-none align-items-center">
-    <div class="m-10 banner-sction">
+<div class="row mt-8 login-content justify-content-center">
+  <div class="col-lg-4 d-flex flex-column align-items-xl-end">
+    <div class="mb-3 d-flex justify-content-center mt-17">
+      <div class="img-pick d-flex flex-column justify-content-center mb-5">
+        <label class="form-label"
+          >Profile Picture<span class="text-danger">*</span></label
+        >
+        <app-img-picker
+          classes="h-300-px w-300-px"
+          (onFileChange)="selectFiles($event)"
+        />
+      </div>
+    </div>
+
+    <div class="d-lg-block d-none banner-sction">
       <div class="hrero-section">
         <div class="about-freedom" routerLink="/">
           <h3 class="text-center">
             The Christian Social platform to unite Christian worldwide.
           </h3>
-          <img src="/assets/images/landingpage/placeholder-user.png" alt="" />
+          <!-- <img src="/assets/images/banner/freedom-buzz.jpeg" alt="" /> -->
         </div>
       </div>
     </div>
   </div>
 
-  <div class="col-12 col-lg-6 mx-auto">
+  <div class="col-12 col-lg-6">
     <p class="text-2 mb-5">
       Already activated?
       <a class="fw-500" routerLink="/login">Login</a>
@@ -56,9 +68,26 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-6 mb-3 d-flex flex-column">
-          <label class="form-label">Profile Picture</label>
+        <div class="col-12 col-md-6 mb-3 d-none px-6">
+          <label class="form-label"
+            >Profile Picture<span class="text-danger"></span
+          ></label>
           <app-img-picker (onFileChange)="selectFiles($event)" />
+        </div>
+        <div class="col-12 col-md-6 mb-3 single-box px-6">
+          <p class="align-items-center text-start my-auto mt-3 font-check">
+            Hide your personal information and remain anonymous on
+            Christian.team.<br />Only your User Name will be displayed
+          </p>
+          <div class="d-flex justify-content-end">
+            <input
+              type="checkbox"
+              class="my-3 check-box"
+              formControlName="Anonymous"
+              />
+              <!-- required -->
+              <!-- <span class="text-danger">*</span> -->
+          </div>
         </div>
 
         <div class="col-12 col-md-6 mb-3">
@@ -133,7 +162,7 @@
             />
             <fa-icon
               [icon]="passwordHidden ? ['fas', 'eye'] : ['fas', 'eye-slash']"
-              class="font-20-px position-absolute"
+              class="font-20-px position-absolute c-pointer"
               (click)="togglePasswordVisibility(passwordInput)"
             ></fa-icon>
           </div>
@@ -164,14 +193,14 @@
               (keyup)="changetopassword($event)"
               formControlName="confirm_password"
               autocomplete="new-password"
-              #confirmPasswordInput
+              #confirmpasswordInput
             />
             <fa-icon
               [icon]="
-                confirmPasswordHidden ? ['fas', 'eye'] : ['fas', 'eye-slash']
+                confirmpasswordHidden ? ['fas', 'eye'] : ['fas', 'eye-slash']
               "
-              class="font-20-px position-absolute"
-              (click)="togglePasswordVisibility(confirmPasswordInput)"
+              class="font-20-px position-absolute eye-slash c-pointer"
+              (click)="toggleConfirmPasswordVisibility(confirmpasswordInput)"
             ></fa-icon>
           </div>
           <div
@@ -210,14 +239,15 @@
 
         <div class="col-12 col-md-6 mb-3">
           <label class="form-label"
-            >Country<span class="text-danger">*</span></label
-          >
+            >Country
+            <span class="text-danger">*</span>
+          </label>
           <select
             id="Country"
-            required
             name="Country"
             class="input-area w-100"
             formControlName="Country"
+            (input)="convertToUppercase($event)"
             (change)="onCountryChange($event)"
           >
             <option [value]="defaultCountry">United states</option>
@@ -232,19 +262,19 @@
 
         <div class="col-12 col-md-6 mb-3">
           <label class="form-label"
-            >Zip Code<span class="text-danger">*</span></label
-          >
+            >Zip Code
+            <!-- <span class="text-danger">*</span> -->
+          </label>
           <input
             type="text"
             class="input-area"
-            required
             placeholder="Enter your zip code"
             formControlName="Zip"
             name="Zip"
             #zipCode
             (input)="convertToUppercase($event)"
           />
-          <div
+          <!-- <div
             class="text-danger"
             *ngIf="
               registerForm.get('Zip').hasError('required') &&
@@ -252,16 +282,16 @@
             "
           >
             Zip code is required.
-          </div>
+          </div> -->
         </div>
 
         <div class="col-12 col-md-6 mb-3">
           <label class="form-label"
-            >State<span class="text-danger">*</span></label
-          >
+            >State or Region
+            <!-- <span class="text-danger">*</span> -->
+          </label>
           <select
             id="State"
-            required
             name="State"
             class="input-area w-100"
             formControlName="State"
@@ -269,7 +299,17 @@
             <option *ngFor="let item of allStateData">
               {{ item.state }}
             </option>
+            <option value="Other">Other</option>
           </select>
+          <!-- <div
+            class="text-danger"
+            *ngIf="
+              registerForm.get('State').hasError('required') &&
+              registerForm.get('State').touched
+            "
+          >
+            State is required.
+          </div> -->
         </div>
 
         <div class="col-12 col-md-6 mb-3">
@@ -300,6 +340,7 @@
             >County
             <!-- <span class="text-danger">*</span> -->
           </label>
+          <!-- required -->
           <input
             type="text"
             class="input-area"
@@ -318,15 +359,13 @@
           </div> -->
         </div>
       </div>
-
-      <div class="mb-3">
-        <div id="captcha" #captcha></div>
-      </div>
-
       <div class="form-check ps-0 my-4 d-flex">
+        <!-- <div id="captcha" #captcha></div> -->
+      </div>
+      <div class="form-check ps-0 my-4 align-items-center d-flex">
         <input
           type="checkbox"
-          class="p-0"
+          class="p-0 check-box"
           required
           formControlName="TermAndPolicy"
         />
@@ -347,8 +386,10 @@
   </div>
 </div>
 <div class="text-center mt-3">
-  <p class="text-danger">
+  <p class="h6 fw-light">
     If you are having technical issues, email
-    <a href="mailto:support@christian.tube">{{ "support@christian.tube" }}</a>
+    <a class="h5 c-pointer custom-primary" (click)="onClick($event)">{{ "support@christian.tube" }}
+      <fa-icon class="font-16-px ms-1" [icon]="['fas', 'copy']" />
+    </a>
   </p>
 </div>

@@ -9,9 +9,9 @@ import {
 import { ProfileService } from '../../services/profile.service';
 import { SharedService } from '../../services/shared.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { PostService } from '../../services/post.service';
 import { ToastService } from '../../services/toast.service';
 import { SocketService } from '../../services/socket.service';
+import { UploadFilesService } from '../../services/upload-files.service';
 
 @Component({
   selector: 'app-edit-research-modal',
@@ -28,7 +28,7 @@ export class EditResearchModalComponent implements OnInit, AfterViewInit {
   constructor(
     public activeModal: NgbActiveModal,
     private profileService: ProfileService,
-    private postService: PostService,
+    private uploadFilesService: UploadFilesService,
     public sharedService: SharedService,
     private spinner: NgxSpinnerService,
     private toastService: ToastService,
@@ -120,14 +120,10 @@ export class EditResearchModalComponent implements OnInit, AfterViewInit {
     }
     this.researchForm.get(ctrlName).setValue(data?.html);
     this.researchForm.get('meta').setValue(data?.meta || {});
-    // console.log('data : ', data);
-
-    // this.postData.postdescription = data?.html;
-    // this.postMessageTags = data?.tags;
   }
 
   onChangeTag(event) {
-    this.researchForm.get('keywords').setValue(event.target.value.replaceAll(' ', ','));
+    this.researchForm.get('keywords').setValue(event.target.value.replaceAll(' ', ',').replaceAll(/\s*,+\s*/g, ','));
   }
 
   getGroups(): void {
@@ -165,36 +161,9 @@ export class EditResearchModalComponent implements OnInit, AfterViewInit {
       reqObj['imageUrl'] = this.postImage || this.postImageUrl;
       reqObj['pdfUrl'] = this.postFile || this.postFileUrl;
 
-
       this.socketService?.createOrEditPost(reqObj);
       this.activeModal.close();
-      this.resetPost()
-      // this.postService
-      //   .createPost(reqObj)
-      //   .subscribe({
-      //     next: (res) => {
-      //       if (res) {
-      //         console.log('res : ', res);
-      //         this.toastService.success('Research edit successfully.');
-      //       } else {
-      //         this.toastService.danger(res['message']);
-      //       }
-      //     },
-      //     error: (error: any) => {
-      //       this.toastService.danger(error.message);
-      //     },
-      //   })
-      // .add(() => {
-      //   this.researchForm.reset();
-      //   this.tagInputDefaultData = 'reset';
-      //   this.postImage = null;
-      //   this.postFile = null;
-      //   setTimeout(() => {
-      //     this.tagInputDefaultData = '';
-      //   }, 100);
-      //   this.formIsClicked.setValue(false);
-      //   this.formIsSubmitted.setValue(false);
-      // });
+      this.resetPost();
     }
     this.removeImgFile()
   }
@@ -213,13 +182,12 @@ export class EditResearchModalComponent implements OnInit, AfterViewInit {
     );
   }
   formdata() {
-    console.log(this.researchForm.value);
   }
   createImagePost(): void {
     const profileId = localStorage.getItem('profileId');
     if (this.selectedImgFile) {
-      this.postService
-      .uploadFile(this.selectedImgFile)
+      this.uploadFilesService
+        .uploadFile(this.selectedImgFile)
         .subscribe({
           next: (res: any) => {
             if (res?.body?.url) {
@@ -229,8 +197,8 @@ export class EditResearchModalComponent implements OnInit, AfterViewInit {
           },
         });
     } else if (this.selectedpdfFile) {
-      this.postService
-      .uploadFile(this.selectedpdfFile)
+      this.uploadFilesService
+        .uploadFile(this.selectedpdfFile)
         .subscribe({
           next: (res: any) => {
             if (res?.body?.url) {
@@ -263,27 +231,12 @@ export class EditResearchModalComponent implements OnInit, AfterViewInit {
 
   onPostFileSelect1(event: any): void {
     const file = event.target?.files?.[0] || {};
-    console.log(file)
     if (file) {
       this.postFileUrl = URL.createObjectURL(event.target.files[0]);
       this.selectedpdfFile = file;
     }
-    // if (file.type.includes("application/pdf")) {
-    //   this.postData['file'] = file;
-    //   this.pdfName = file?.name
-    //   this.postData['imageUrl'] = null;
-    //   this.postData['streamname'] = null;
-    // } else {
-    //   this.postData['file'] = file;
-    //   this.postData['imageUrl'] = URL.createObjectURL(file);
-    //   this.pdfName = null;
-    //   this.postData['pdfUrl'] = null;
-    // }
-    // if (file?.size < 5120000) {
-    // } else {
-    //   this.toastService.warring('Image is too large!');
-    // }
   }
+
   onPostFileSelect(event: any): void {
     const file = event.target?.files?.[0] || {};
     if (file.type.includes('application/pdf')) {
@@ -312,6 +265,5 @@ export class EditResearchModalComponent implements OnInit, AfterViewInit {
     Object.keys(this.researchForm.controls).forEach(key => {
       this.researchForm.get(key).setErrors(null);
     });
-    console.log(this.researchForm.value)
   }
 }

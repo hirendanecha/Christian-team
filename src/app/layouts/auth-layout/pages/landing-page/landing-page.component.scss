@@ -23,11 +23,6 @@
     object-fit: cover;
     height: calc(100vh - 48px);
 
-    // @media(max-width:750px){
-    //   background-size: cover;
-    //   background-position: 70%;
-    // }
-
     .banner-text {
       max-width: 600px;
       width: 100%;
@@ -244,7 +239,7 @@
 
 .landing-btn {
   .cmn-btn {
-    background: #1d9bf0;
+    background: var(--primary-color);
     color: #fff;
     border: var(--body-color);
     height: 38px;

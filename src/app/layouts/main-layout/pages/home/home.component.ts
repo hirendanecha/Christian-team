@@ -68,6 +68,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   currentImageIndex: number = this.postMediaData.length - 1;
   currentIndex: any;
   selectedFiles: any[] = [];
+  marketingSlug: string;
   constructor(
     private modalService: NgbModal,
     private spinner: NgxSpinnerService,
@@ -90,7 +91,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.route.paramMap.subscribe((paramMap) => {
         const name = paramMap.get('name');
-
+        
         if (name) {
           this.communitySlug = name;
           this.getCommunityDetailsBySlug();
@@ -110,6 +111,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.router.events.subscribe((event) => {
+      const navigationEndEvent = event as any;
+      const prepareSlug = navigationEndEvent?.routerEvent?.urlAfterRedirects;
+      this.marketingSlug = `${environment.webUrl.replace(/\/+$/, '')}/${prepareSlug?.replace(/^\/+/, '')}`;
       if (event instanceof NavigationEnd) {
         window.scrollTo(0, 0);
       }
@@ -119,13 +123,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     const isRead = localStorage.getItem('isRead');
     if (isRead === 'N') {
-      this.sharedService.isNotify = true;
+      // this.sharedService.isNotify = true;
+      this.sharedService.setNotify(true);
     }
     this.socketService.socket?.on(
       'new-post-added',
       (res: any) => {
         this.spinner.hide();
-        this.resetPost();
+        // this.resetPost();
       },
       (error: any) => {
         this.spinner.hide();
@@ -186,7 +191,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         fileData.imageUrl = URL.createObjectURL(file);
       }
       this.selectedFiles.push(fileData);
-      // console.log(`File ${i + 1}:`, fileData);
     }
     if (files?.[0]?.type?.includes('application/')) {
       this.postMediaData = this.selectedFiles;
@@ -195,7 +199,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selectedFiles
       );
     }
-    // console.log('Selected files:', this.postMediaData);
   }
 
   removePostSelectedFile(index: number): void {
@@ -349,8 +352,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.postData.metadescription = null;
       }
       this.toastService.success('Post created successfully.');
-      console.log(this.postData);
-
       this.socketService?.createOrEditPost(this.postData);
       this.buttonClicked = false;
       this.resetPost();

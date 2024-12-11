@@ -2,7 +2,7 @@ import 'zone.js/node';
 
 import { APP_BASE_HREF } from '@angular/common';
 import { ngExpressEngine } from '@nguniversal/express-engine';
-import * as express from 'express';
+import express from 'express';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import fetch from 'node-fetch';
@@ -99,16 +99,7 @@ export function app(): express.Express {
         ) {
           let id = params.split('/');
           id = id[id.length - 1];
-          // id = params[params.length - 1];
-          // id = Number(id);
-          // let id = 'local-organic-food-sources';
-          console.log({ id });
-
-          // if (!isNaN(id) || Math.sign(id) > 0) {
           const community: any = await getCommunity(id);
-
-          console.log({ params }, { id }, { community });
-
           const talent = {
             name: community?.CommunityName,
             description: community?.CommunityDescription,
@@ -121,15 +112,7 @@ export function app(): express.Express {
         } else if (params.indexOf('settings/view-profile/') > -1) {
           let id = params.split('/');
           id = +id[id.length - 1];
-          // id = params[params.length - 1];
-          // id = Number(id);
-          // let id = 'local-organic-food-sources';
-          // console.log({ id });
-
-          // if (!isNaN(id) || Math.sign(id) > 0) {
           const { data: profile }: any = await getProfile(id);
-
-          console.log({ params }, { id }, { profile: JSON.stringify(profile) });
           const talent = {
             name: profile[0]?.Username,
             description: profile[0].FirstName + ' ' + profile[0].LastName,
@@ -141,38 +124,31 @@ export function app(): express.Express {
         } else if (params.indexOf('post/') > -1) {
           let id = params.split('/');
           id = id[id.length - 1];
-          // id = params[params.length - 1];
-          // id = Number(id);
-          // let id = 'local-organic-food-sources';
-          console.log({ id });
-
-          // if (!isNaN(id) || Math.sign(id) > 0) {
           const [post]: any = await getPost(+id);
-
-          console.log('post===>', post);
           const pdhtml = document.createElement('div');
           pdhtml.innerHTML = post?.postdescription || post?.metadescription;
           const talent = {
             name: post?.title || post?.albumname || 'Christian.Team Post',
             description: pdhtml?.textContent || 'Post content',
-            image: post?.thumbfilename || post?.metaimage || post?.imageUrl || 'https://christian.team/assets/images/profile-cover.png',
+            image:
+              post?.coverImg ||
+              post?.thumbfilename ||
+              post?.metaimage ||
+              post?.imageUrl ||
+              null,
           };
+          //  || 'https://christian.team/assets/images/profile-cover.png',
           seo.title = talent.name;
           seo.description = strip_html_tags(talent.description);
           seo.image = talent.image;
-          // }
-        }else if (params.indexOf('research/') > -1) {
+        } else if (params.indexOf('research/') > -1) {
           let id = params.split('/');
           id = id[id.length - 1];
-          console.log({ id });
-
           const group: any = await getResearchGroup(id);
-
-          console.log('group===>', group);
           const talent = {
-            name: `ChristianTeam Research ${group?.PageTitle}`,
-            description: group?.PageDescription,
-            image: group?.CoverPicName || group?.ProfilePicName
+            name: `Christian.Team Research ${group?.PageTitle}`,
+            description: group?.PageDescription || group?.PageTitle,
+            image: group?.CoverPicName || group?.ProfilePicName,
           };
           seo.title = talent.name;
           seo.description = talent.description;
@@ -202,13 +178,10 @@ export function app(): express.Express {
 }
 
 async function getCommunity(id: any) {
-  return fetch(api_url + 'community/bySlug/' + id).then((resp) =>
-    resp.json()
-  );
+  return fetch(api_url + 'community/bySlug/' + id).then((resp) => resp.json());
 }
 
 async function getPost(id: any) {
-  console.log(api_url);
   return fetch(api_url + 'posts/get/' + id).then((resp) => resp.json());
 }
 async function getProfile(id: any) {
@@ -218,8 +191,8 @@ async function getProfile(id: any) {
 }
 
 async function getResearchGroup(id: any) {
-  return fetch(api_url + 'profile/getGroupBasicDetails/' + id).then((resp: any) =>
-    resp.json()
+  return fetch(api_url + 'profile/getGroupBasicDetails/' + id).then(
+    (resp: any) => resp.json()
   );
 }
 

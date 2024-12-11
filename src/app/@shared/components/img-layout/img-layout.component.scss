@@ -7,7 +7,7 @@
 
     .single {
       flex: 1;
-
+      
       .large-image {
         grid-column: span 2;
         img {
@@ -24,6 +24,9 @@
           min-height: 245px;
           max-height: 245px;
           width: 100%;
+        }
+        .img-preview {
+          max-height: 250px;
         }
       }
     }

@@ -4,13 +4,13 @@
     'mh-100 vh-100': (breakpointService?.screen | async).lg.lessThen
   }"
 >
-  <ng-container *ngIf="tokenService.getToken()">
+  <ng-container *ngIf="tokenService.getCredentials()">
     <div class="profile-pic d-flex gap-2" routerLink="/home">
       <div class="position-relative">
         <img
           class="avatar-img max-un"
           loading="lazy"
-          data-src="{{ sharedService?.userData?.ProfilePicName }}"
+          data-src="{{ sharedService?.userData?.ProfilePicName || '/assets/images/avtar/placeholder-user.png' }}"
           onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
           alt="avatar"
         />
@@ -21,7 +21,7 @@
         </h6>
       </div>
     </div>
-    <ul class="profile-link m-0 mt-5 p-0 border-bottom-0">
+    <ul class="profile-link m-0 mt-3 p-0 border-bottom-0 mb-15 mb-sm-0">
       <li class="ms-1">
         <a
           class="d-flex gap-4"
@@ -65,27 +65,16 @@
           <span>Christian Topics</span>
         </a>
       </li>
-      <!-- <li class="ms-1">
-        <a
-          class="d-flex gap-4"
-          routerLink="/request-video-call"
-          routerLinkActive="active"
-          (click)="closeSidebar()"
-        >
-          <fa-icon [icon]="['fas', 'phone']" class="font-24-px" />
-          <span>Request Video Call</span>
-        </a>
-      </li> -->
 
       <li class="ms-1">
         <a
           routerLink="/research"
-          target="_blank"
           routerLinkActive="active"
           class="d-flex gap-4"
           data-toggle="tooltip"
           data-placement="bottom"
           title="Research"
+          (click)="closeSidebar()"
         >
           <fa-icon [icon]="['fas', 'book-open']" class="font-24-px" />
           <span>Research</span>
@@ -114,7 +103,7 @@
           [routerLink]="'settings/view-profile/' + profileId"
           routerLinkActive="active"
           (click)="closeSidebar()"
-        >
+          >
           <fa-icon [icon]="['fas', 'gear']" class="font-20-px" />
           <span>View Profile</span>
         </a>
@@ -123,7 +112,6 @@
         <a
           class="d-flex gap-4"
           [routerLink]="'/profile-chats'"
-          target="_blank"
           routerLinkActive="active"
           (click)="closeSidebar()"
         >
@@ -134,7 +122,6 @@
       <!-- <li>
         <a
           href="https://1776token.com/"
-          target="_blank"
           class="d-flex gap-4"
           (click)="closeSidebar()"
         >
@@ -145,7 +132,6 @@
       <li>
         <a
           href="https://localfoods.market/"
-          target="_blank"
           class="d-flex gap-4"
           (click)="closeSidebar()"
         >
@@ -156,7 +142,6 @@
       <li>
         <a
           href="https://lamarslist.com/"
-          target="_blank"
           class="d-flex gap-4"
           (click)="closeSidebar()"
         >
@@ -176,7 +161,7 @@
           <span>Claim 50 free 1776</span>
         </a>
       </li> -->
-
+ 
       <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <div
           class="d-flex gap-4 toggle-dropdown align-items-center"
@@ -245,7 +230,7 @@
       </li>
     </ul>
   </ng-container>
-  <ng-container *ngIf="!tokenService.getToken()">
+  <ng-container *ngIf="!tokenService.getCredentials()">
     <div class="dashboard-img mb-5">
       <img
         class="w-100 rounded-3"
@@ -261,10 +246,10 @@
   </ng-container>
   <ng-container *ngIf="sharedService?.advertizementLink?.length">
     <div class="mt-3">
-      <h6>Advertizement Link</h6>
-      <div *ngFor="let item of sharedService?.advertizementLink">
-        <app-post-meta-data-card [post]="item" />
-      </div>
+    <h6>Advertizement Link</h6>
+    <div *ngFor="let item of sharedService?.advertizementLink">
+      <app-post-meta-data-card [post]="item" />
     </div>
+  </div>
   </ng-container>
 </div>

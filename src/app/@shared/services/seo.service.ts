@@ -18,8 +18,10 @@ export class SeoService {
   ) { }
 
   updateTitle(title: string): void {
-    this.title.setTitle(title);
-  }
+    const capitalizeFirstLetter = (str: string) => str?.charAt(0)?.toUpperCase() + str?.slice(1);
+    const formattedTitle = capitalizeFirstLetter(title);
+    this.title.setTitle(formattedTitle);
+  }  
 
   updateMetaTags(metaTags: MetaDefinition[]): void {
     metaTags.forEach((m) => {
@@ -69,7 +71,7 @@ export class SeoService {
     }
 
     if (!tagValue.image) {
-      tagValue.image = 'https://christian.team/assets/images/banner/Healing-Tube-Logo.png';
+      tagValue.image = 'https://christian.team/assets/images/banner/freedom-buzz-high-res.jpeg';
     }
 
     this.meta.updateTag({
@@ -155,7 +157,6 @@ export class SeoService {
       },
       ]
     };
-    console.log('seoObj', seoObj, obj?.description)
     this.updateComponentSeo(seoObj, isMainPage);
   }
 }

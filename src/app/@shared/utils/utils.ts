@@ -5,14 +5,14 @@ export const slugify = (str: string) => {
 }
 
 export const numToRevArray = (num: number) => {
-  return Array(num).fill(0).map((x,i)=>i).reverse();
+  return Array(num).fill(0).map((x, i) => i).reverse();
 }
 
-export const  isFormSubmittedAndError = (formGroup: FormGroup, isFormSubmitted: boolean, controlName: string, errorName: string = '', notError: Array<string> = new Array()): any => {
+export const isFormSubmittedAndError = (formGroup: FormGroup, isFormSubmitted: boolean, controlName: string, errorName: string = '', notError: Array<string> = new Array()): any => {
   const otherError: any = formGroup.controls[controlName].errors;
 
   if (isFormSubmitted && otherError) {
-      return errorName == '' ? true : (otherError ? !Object.keys(otherError).some(err => notError.includes(err)) : true) ? formGroup.controls[controlName].hasError(errorName) : false;
+    return errorName == '' ? true : (otherError ? !Object.keys(otherError).some(err => notError.includes(err)) : true) ? formGroup.controls[controlName].hasError(errorName) : false;
   }
   return false;
 }

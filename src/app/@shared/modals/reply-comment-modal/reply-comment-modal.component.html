@@ -21,8 +21,8 @@
         alt="avatar"
       />
     </div>
-    <div class="px-3 gap-2 w-100 ms-2">
-      <div class="d-flex">
+    <div class="px-3 gap-2 align-items-center w-100 ms-2">
+      <div class="d-flex align-items-center position-relative">
         <!-- <input
           placeholder="Reply..."
           class="outline-0 w-100 comment-input c-text"
@@ -35,7 +35,7 @@
           class="outline-0 w-100 comment-input c-text"
         ></div> -->
         <app-tag-user-input
-        class="edit-comment-emoji"
+          class="edit-comment-emoji"
           placeholder="Comment"
           [value]="commentMessageInputValue"
           [isShowEmojis]="true"
@@ -92,7 +92,7 @@
 
   <button
     type="button"
-    class="btn btn-sm btn-secondary"
+    class="btn btn-sm btn-success"
     (click)="onChangeComment()"
   >
     {{ confirmButtonLabel }}

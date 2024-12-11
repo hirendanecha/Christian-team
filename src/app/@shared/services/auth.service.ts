@@ -6,7 +6,7 @@ import { Login } from '../constant/login';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-  withCredentials: true
+  withCredentials: true,
 };
 
 @Injectable({

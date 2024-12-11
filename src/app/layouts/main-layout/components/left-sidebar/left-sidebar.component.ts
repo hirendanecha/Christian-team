@@ -24,15 +24,17 @@ import { ConferenceLinkComponent } from 'src/app/@shared/modals/create-conferenc
 export class LeftSidebarComponent implements OnInit {
   isSettingMenuCollapse = true;
   user: any = {};
-  isRead: any
+  isRead: any;
   sidebar: any = {
     isShowLeftSideBar: true,
     isShowRightSideBar: true,
     isShowResearchLeftSideBar: false,
   };
-  profileId: number
+  profileId: number;
+  linkMetaData: {};
+  communitySlug = '';
   originalFavicon: HTMLLinkElement;
-  
+
   constructor(
     private modalService: NgbModal,
     public sharedService: SharedService,
@@ -96,10 +98,11 @@ export class LeftSidebarComponent implements OnInit {
 
   notificationNavigation() {
     this.closeSidebar();
-    this.originalFavicon.href = '/assets/images/avtar/placeholder-user.png';
+    // this.originalFavicon.href = '/assets/images/icon-unread.jpg';
     if (this.isRead === 'N') {
       localStorage.setItem('isRead', 'Y');
-      this.sharedService.isNotify = false;
+      // this.sharedService.isNotify = false;
+      this.sharedService.setNotify(false);
     }
   }
 
@@ -108,7 +111,7 @@ export class LeftSidebarComponent implements OnInit {
     window.scrollTo(0, 0);
     this.router.navigate(['home']).then(() => {
       location.reload();
-    })
+    });
   }
 
   closeSidebar(): void {

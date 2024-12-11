@@ -71,7 +71,9 @@ export class CustomerService {
   }
 
   getProfile(id): Observable<Object> {
-    return this.http.get<Object>(`${this.baseUrl}/profile/${id}?q=${Date.now()}`);
+    return this.http.get<Object>(
+      `${this.baseUrl}/profile/${id}?q=${Date.now()}`
+    );
   }
 
   updateProfile(id, customer): Observable<Object> {
@@ -104,7 +106,20 @@ export class CustomerService {
 
   readUnreadNotification(id: number, isRead: string): Observable<any> {
     return this.http.get(
+      // `${this.baseUrl}/edit-notification/${id}?isRead=${isRead}`
       `${this.baseUrl}/edit-notification/${id}?isRead=${isRead}&q=${Date.now()}`
+    );
+  }
+
+  readAllNotification(id: number): Observable<any> {
+    return this.http.get(
+      `${this.baseUrl}/read-all-notification/${id}?q=${Date.now()}`
+    );
+  }
+
+  deleteAllNotification(id: number): Observable<any> {
+    return this.http.delete(
+      `${this.baseUrl}/delete-all-notification/${id}?q=${Date.now()}`
     );
   }
 

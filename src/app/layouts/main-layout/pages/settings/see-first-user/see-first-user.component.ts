@@ -27,7 +27,6 @@ export class SeeFirstUserComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(isPlatformBrowser(this.platformId))
     if (isPlatformBrowser(this.platformId)) {
       this.getSeeFirstUsers();
     }

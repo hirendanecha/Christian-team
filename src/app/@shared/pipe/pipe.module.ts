@@ -5,12 +5,13 @@ import { GetImageUrlPipe } from './get-image-url.pipe';
 import { CommaSeperatePipe } from './comma-seperate.pipe';
 import { DateDayPipe } from './date-day.pipe';
 import { NoSanitizePipe } from './sanitize.pipe';
-import { MessageDatePipe } from './message-date.pipe';
 import { MessageTimePipe } from './message-time.pipe';
+import { MessageDatePipe } from './message-date.pipe';
+import { SearchFilterPipe } from './search-filter.pipe';
 import { HighlightPipe } from './hightlight-text.pipe';
 import { RandomAdvertisementUrlPipe } from './random-advertisement.pipe';
-import { SearchFilterPipe } from './search-filter.pipe';
 import { StripHtmlPipe, TruncatePipe } from './post-description.pipe';
+import { LinkifyPipe } from './linkify.pipe';
 
 @NgModule({
   declarations: [
@@ -19,13 +20,14 @@ import { StripHtmlPipe, TruncatePipe } from './post-description.pipe';
     CommaSeperatePipe,
     DateDayPipe,
     NoSanitizePipe,
-    MessageDatePipe,
     MessageTimePipe,
+    MessageDatePipe,
+    SearchFilterPipe,
     HighlightPipe,
     RandomAdvertisementUrlPipe,
-    SearchFilterPipe,
     TruncatePipe,
     StripHtmlPipe,
+    LinkifyPipe
   ],
   imports: [CommonModule],
   exports: [
@@ -34,13 +36,14 @@ import { StripHtmlPipe, TruncatePipe } from './post-description.pipe';
     CommaSeperatePipe,
     DateDayPipe,
     NoSanitizePipe,
-    MessageDatePipe,
     MessageTimePipe,
+    MessageDatePipe,
+    SearchFilterPipe,
     HighlightPipe,
     RandomAdvertisementUrlPipe,
-    SearchFilterPipe,
     TruncatePipe,
     StripHtmlPipe,
+    LinkifyPipe
   ],
 })
 export class PipeModule {}

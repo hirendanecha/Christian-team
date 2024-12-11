@@ -1,19 +1,24 @@
-<div class="d-flex flex-column flex-lg-row w-100 gap-5 edit-profile">
-  <app-img-picker
-    classes="w-300-px h-300-px"
-    [url]="customer?.ProfilePicName"
-    (onFileChange)="onProfileImgChange($event)"
-  />
-
-  <div class="d-flex flex-column mb-5 w-100">
+<div class="d-flex flex-column gap-5 edit-profile">
+  <div class="d-flex flex-column flex-md-row gap-5">
     <app-img-picker
-      classes="w-100 h-300-px"
-      defaultImg="/assets/images/profile-cover.png"
-      [url]="customer?.CoverPicName"
-      (onFileChange)="onProfileCoverImgChange($event)"
-    />
+      classes="w-300-px h-300-px"
+      [url]="editForm.get('ProfilePicName')?.value"
+      (onFileChange)="onProfileImgChange($event)"
+      [showClearIcon]="resetImageClosebtn"
+    ></app-img-picker>
 
-    <div class="single-box p-5 mt-5">
+    <app-img-picker
+      class="w-100"
+      classes="h-300-px"
+      defaultImg="/assets/images/profile-cover.png"
+      [url]="editForm.get('CoverPicName')?.value"
+      (onFileChange)="onProfileCoverImgChange($event)"
+      [showClearIcon]="resetImageClosebtn"
+    ></app-img-picker>
+  </div>
+
+  <div class="d-flex flex-column flex-md-row gap-md-5">
+    <div class="single-box p-5 w-100">
       <form
         [formGroup]="editForm"
         id="editForm"
@@ -154,12 +159,7 @@
                 type="checkbox"
                 role="switch"
                 id="flexSwitchCheckChecked"
-                (change)="
-                  toggleSoundPreference(
-                    'callNotificationSound',
-                    isCallSoundEnabled
-                  )
-                "
+                (change)="toggleSoundPreference('callNotificationSound', isCallSoundEnabled)"
               />
             </div>
           </div>
@@ -175,12 +175,7 @@
                 type="checkbox"
                 role="switch"
                 id="flexSwitchCheckChecked"
-                (change)="
-                  toggleSoundPreference(
-                    'messageNotificationSound',
-                    isMessageSoundEnabled
-                  )
-                "
+                (change)="toggleSoundPreference('messageNotificationSound', isMessageSoundEnabled)"
               />
             </div>
           </div>
@@ -196,12 +191,7 @@
                 type="checkbox"
                 role="switch"
                 id="flexSwitchCheckChecked"
-                (change)="
-                  toggleSoundPreference(
-                    'tagNotificationSound',
-                    isNotificationSoundEnabled
-                  )
-                "
+                (change)="toggleSoundPreference('tagNotificationSound', isNotificationSoundEnabled)"
               />
             </div>
           </div>
@@ -220,12 +210,7 @@
                 type="checkbox"
                 role="switch"
                 id="flexSwitchCheckChecked"
-                (change)="
-                  toggleSoundPreference(
-                    'messageNotificationEmail',
-                    isMessageEmailEnabled
-                  )
-                "
+                (change)="toggleSoundPreference('messageNotificationEmail', isMessageEmailEnabled)"
               />
             </div>
           </div>
@@ -241,17 +226,13 @@
                 type="checkbox"
                 role="switch"
                 id="flexSwitchCheckChecked"
-                (change)="
-                  toggleSoundPreference(
-                    'postNotificationEmail',
-                    isTagEmailEnabled
-                  )
-                "
+                (change)="toggleSoundPreference('postNotificationEmail', isTagEmailEnabled)"
               />
             </div>
           </div>
         </div>
       </div>
+
       <button
         class="btn cmn-btn mt-5 login-button float-end w-100-px"
         (click)="confirmAndUpdateCustomer()"
