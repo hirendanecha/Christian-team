@@ -152,7 +152,7 @@
         <app-img-preview [src]="post?.thumbfilename" classes="w-100" />
       </ng-container> -->
     </div>
-    <div
+    <!-- <div
       class="mt-1 friends-list like-comment-share p-3 d-center flex-lg-wrap gap-3 gap-md-0 justify-content-between"
     >
       <button
@@ -169,14 +169,6 @@
         {{ post?.likescount > 0 ? post?.likescount : 0 }}
         <p class="d-lg-block d-none m-0">Likes</p>
       </button>
-      <!-- <button
-      class="d-center gap-1 gap-sm-2 mdtxt align-items-center"
-      ngbTooltip="Coming Soon!"
-      placement="bottom"
-    >
-      <fa-icon [icon]="['fas', 'message']" class="font-20-px" />
-      Video reply
-    </button> -->
       <button
         class="d-center gap-1 gap-sm-2 mdtxt align-items-center"
         data-toggle="tooltip"
@@ -189,7 +181,7 @@
         {{ post.commentCount }}
         <p class="d-lg-block d-none m-0">Comments</p>
       </button>
-    </div>
+    </div> -->
 
     <ng-container *ngIf="isOpenCommentsPostId === post.id">
       <ng-container *ngIf="commentList.length; else elseNoCommentsFound">

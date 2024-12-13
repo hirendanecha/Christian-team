@@ -112,6 +112,7 @@
         <a
           class="d-flex gap-4"
           [routerLink]="'/profile-chats'"
+          target="_blank"
           routerLinkActive="active"
           (click)="closeSidebar()"
         >
@@ -131,7 +132,19 @@
       </li> -->
       <li>
         <a
+          href="https://www.healing.tube/"
+          target="_blank"
+          class="d-flex gap-3"
+          (click)="closeSidebar()"
+        >
+          <fa-icon [icon]="['fas', 'link']" class="font-24-px" />
+          <span>Natural Healing</span>
+        </a>
+      </li>
+      <li>
+        <a
           href="https://localfoods.market/"
+          target="_blank"
           class="d-flex gap-4"
           (click)="closeSidebar()"
         >
@@ -142,6 +155,7 @@
       <li>
         <a
           href="https://lamarslist.com/"
+          target="_blank"
           class="d-flex gap-4"
           (click)="closeSidebar()"
         >
