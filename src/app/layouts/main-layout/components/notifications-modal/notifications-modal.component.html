@@ -1,4 +1,4 @@
-<div class="main-area p-5 notification-content modal-height">
+<div #notificationArea class="main-area p-5 notification-content modal-height">
   <h5 class="mb-8">Notifications</h5>
   <ng-container *ngFor="let notification of sharedService.notificationList">
     <div class="single-box p-0 mb-7" *ngIf="notification">
@@ -7,6 +7,7 @@
         (click)="readUnreadNotification(notification.postId, notification)"
         [routerLink]="notification.postId ? '/post/' + notification.postId : null"
         >
+        <!-- [target]="notification?.postId || notification?.groupId ? '_blank' : null" -->
         <div class="left-item position-relative d-inline-flex gap-3">
           <div class="avatar position-relative d-inline-flex">
             <img
@@ -31,7 +32,8 @@
                 {{ notification?.createDate | dateDay }}</span
               >
             </h6>
-            <p class="mdtxt">{{ notification?.notificationDesc }}</p>
+            <!-- <p class="mdtxt">{{ notification?.notificationDesc }}</p> -->
+            <p class="mdtxt" [innerHTML]="customName(notification)"></p>
           </div>
         </div>
       </a>
