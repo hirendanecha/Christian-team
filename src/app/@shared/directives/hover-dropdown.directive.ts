@@ -134,7 +134,7 @@ export class HoverDropdownDirective {
 
   private copyToClipboard(text) {
     const linkHref = text.getAttribute('href');
-    const linkText = text.textContent;
+    const linkText = text.textContent?.replace(/\s+/g, '');
     if (linkHref && linkText) {
       const trimmedLink = linkHref.split('/settings/view-profile/')[1];
       const finalLink = `/settings/view-profile/${trimmedLink}`;

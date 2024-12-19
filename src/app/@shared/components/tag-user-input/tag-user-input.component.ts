@@ -118,7 +118,9 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
   //   }
   // }
   checkUserTagFlag(): void {
-    this.userList = [];
+    if (this.userNameSearch.length <= 1) {
+      this.userList = [];
+    };
     if (this.isAllowTagUser) {
       let htmlText = this.tagInputDiv?.nativeElement?.innerHTML || '';
       const anchorTagRegex =
@@ -132,7 +134,7 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
         let foundValidTag = false;
         for (const match of matches) {
           const atSymbolIndex = match.index;
-
+          
           if (cursorPosition > atSymbolIndex) {
             let textAfterAt = htmlText
               .substring(atSymbolIndex + 1, cursorPosition)
@@ -159,15 +161,19 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
         if (
           foundValidTag &&
           this.userNameSearch &&
-          this.userNameSearch.length >= 0 &&
+          this.userNameSearch.length > 0 &&
           !this.isCustomeSearch
         ) {
           this.getUserList(this.userNameSearch);
+        } else if (this.isCustomeSearch) {
           this.getUserList('');
         } else {
           this.clearUserSearchData();
         }
       } else {
+        if (this.userList.length) {
+          this.clearUserSearchData();
+        };
         return;
       }
     }
@@ -205,7 +211,7 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
     const url = matches?.[0] || extractedLinks?.[0];
     if (url) {
       if (url !== this.metaData?.url) {
-        // this.isMetaLoader = true;
+        this.isMetaLoader = true;
         // this.spinner.show();
         const unsubscribe$ = new Subject<void>();
         this.postService
@@ -359,7 +365,7 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
     this.emitChangeEvent();
   }
 
-  getUserList(search: string): void {
+  getUserList(search: string): void { 
     if (this.isCustomeSearch) {
       this.cdr.detach();
       this.messageService
@@ -367,9 +373,13 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
         .subscribe({
           next: (res: any) => {
             if (res?.data?.length > 0) {
-              this.userList = res.data.filter(
-                (user) => user.Id !== this.profileId
-              );
+              this.userList = res.data.filter(user => {
+                if (user.Id !== this.profileId) {
+                  user.Username = user.Username.replace(/\s+/g, '');
+                  return true;
+                }
+                return false;
+              });
             } else {
               this.clearUserSearchData();
             }
@@ -378,11 +388,13 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
             this.clearUserSearchData();
           },
         });
-    } else {
+    } else if (search) {
       this.customerService.getProfileList(search).subscribe({
         next: (res: any) => {
           if (res?.data?.length > 0) {
-            this.userList = res.data.map((e) => e);
+            this.userList = res.data.filter(user => {
+              return user.Username = user.Username.replace(/\s+/g, '');
+            });
             // this.userSearchNgbDropdown.open();
           } else {
             this.clearUserSearchData();

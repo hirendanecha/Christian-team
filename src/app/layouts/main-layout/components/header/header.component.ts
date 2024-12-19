@@ -53,6 +53,7 @@ export class HeaderComponent {
   hideOngoingCallButton: boolean = false;
   authToken = localStorage.getItem('auth-token');
   showUserGuideBtn: boolean = false;
+  isOnCall: boolean = false;
   private subscription: Subscription;
   constructor(
     private modalService: NgbModal,
@@ -62,8 +63,7 @@ export class HeaderComponent {
     public breakpointService: BreakpointService,
     private offcanvasService: NgbOffcanvas,
     public tokenService: TokenStorageService,
-    private socketService: SocketService,
-    private soundControlService: SoundControlService
+    private socketService: SocketService
   ) {
     this.originalFavicon = document.querySelector('link[rel="icon"]');
     this.subscription = this.sharedService.isNotify$.subscribe(
@@ -71,7 +71,6 @@ export class HeaderComponent {
     );
     this.socketService?.socket?.on('isReadNotification_ack', (data) => {
       if (data?.profileId) {
-        // this.sharedService.isNotify = false;
         this.sharedService.setNotify(false);
         localStorage.setItem('isRead', data?.isRead);
         this.originalFavicon.href = '/assets/images/icon.jpg';
@@ -79,80 +78,64 @@ export class HeaderComponent {
     });
     const isRead = localStorage.getItem('isRead');
     if (isRead === 'N') {
-      // this.sharedService.isNotify = true;
       this.sharedService.setNotify(true);
     } else {
-      // this.sharedService.isNotify = false;
       this.sharedService.setNotify(false);
     }
     this.channelId = +localStorage.getItem('channelId');
+    this.setupRouterSubscription();
+    // this.setupLocalStorageListener();
+  }
 
+  private setupRouterSubscription() {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const currentUrl = this.router.url;
-        const profileId = +localStorage.getItem('profileId') || null;
-
-        this.hideSubHeader =
-          currentUrl.includes('profile-chats') ||
-          currentUrl.includes('facetime');
+        this.hideSubHeader = currentUrl.includes('profile-chats') || currentUrl.includes('facetime');
         this.showUserGuideBtn = currentUrl.includes('home');
-        this.hideOngoingCallButton = currentUrl.includes('facetime');
-        this.sharedService.callId = localStorage.getItem('callId') || null;
+        // this.hideOngoingCallButton = currentUrl.includes('facetime') || false;
+        // this.handleRouteChange();
+      }
+    });
+  }
 
-        if (!profileId) return;
+  private handleRouteChange() {
+    const profileId = +localStorage.getItem('profileId') || null;
 
-        const reqObj = { profileId };
-        this.socketService?.checkCall(reqObj, (data: any) => {
-          const isOnCall = data?.isOnCall === 'Y';
-          const hasCallLink = data?.callLink;
+    if (!profileId) return;
 
-          if (isOnCall && hasCallLink && !this.sharedService.callId) {
-            if (!this.hideOngoingCallButton) {
-              const callSound = new Howl({
-                src: [
-                  'https://s3.us-east-1.wasabisys.com/freedom-social/famous_ringtone.mp3',
-                ],
-                loop: true,
-              });
-              this.soundControlService.initTabId();
+    const reqObj = { profileId };
+    this.socketService?.checkCall(reqObj, (data: any) => {
+      if (data) {
+        this.sharedService.setExistingCallData(data);
+        this.isOnCall =
+          this.sharedService.getExistingCallData().isOnCall === 'Y';
+      } else {
+        this.isOnCall = false;
+      }
 
-              const modalRef = this.modalService.open(
-                IncomingcallModalComponent,
-                {
-                  centered: true,
-                  size: 'sm',
-                  backdrop: 'static',
-                }
-              );
+      if (this.isOnCall) {
+        const updatedData = { isOnCall: this.isOnCall, timestamp: Date.now() };
+        localStorage.setItem('callState', JSON.stringify(updatedData));
+      } else {
+        localStorage.removeItem('callState');
+      }
+    });
+  }
 
-              const callData = {
-                Username: '',
-                link: data.callLink,
-                roomId: data.roomId,
-                groupId: data.groupId,
-                ProfilePicName: this.sharedService?.userData?.ProfilePicName,
-              };
+  private setupLocalStorageListener() {
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'callState') {
+        const callState = event.newValue ? JSON.parse(event.newValue) : null;
 
-              modalRef.componentInstance.calldata = callData;
-              modalRef.componentInstance.sound = callSound;
-              modalRef.componentInstance.showCloseButton = true;
-              modalRef.componentInstance.title = 'Join existing call...';
-
-              modalRef.result.then((res) => {
-                if (res === 'cancel') {
-                  const callLogData = {
-                    profileId,
-                    roomId: callData?.roomId,
-                    groupId: callData?.groupId,
-                  };
-                  this.socketService?.endCall(callLogData);
-                }
-              });
-            }
-          } else {
-            this.hideOngoingCallButton = true;
-          }
-        });
+        if (callState) {
+          this.isOnCall = callState.isOnCall || false;
+          this.sharedService.setExistingCallData({
+            isOnCall: callState.isOnCall,
+          });
+        } else {
+          this.isOnCall = false;
+        }
       }
     });
   }
@@ -265,7 +248,22 @@ export class HeaderComponent {
     window.open(redirectUrl, '_blank');
   }
 
+  // openUserGuide() {
+  //   this.modalService.open(UserGuideModalComponent, {
+  //     centered: true,
+  //     size: 'lg',
+  //   });
+  // }
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    localStorage.removeItem('callState');
+    window.removeEventListener('storage', this.setupLocalStorageListener);
+  }
+
+  goToOnGoingCall(): void {
+    this.router.navigate([
+      `/facetime/${this.sharedService.getExistingCallData()?.callLink}`,
+    ]);
   }
 }

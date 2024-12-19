@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
@@ -43,6 +44,7 @@ export class ProfileChatsSidebarComponent
 
   @ViewChild('userSearchDropdownRef', { static: false, read: NgbDropdown })
   userSearchNgbDropdown: NgbDropdown;
+  @ViewChild('chatSidebar') chatSidebar: ElementRef;
   searchText = '';
   userList: any = [];
   profileId: number;
@@ -62,6 +64,7 @@ export class ProfileChatsSidebarComponent
   @Input('isRoomCreated') isRoomCreated: boolean = false;
   @Input('selectedRoomId') selectedRoomId: number = null;
   userStatus: string;
+  originalFavicon: HTMLLinkElement;
   constructor(
     private customerService: CustomerService,
     private socketService: SocketService,
@@ -102,6 +105,7 @@ export class ProfileChatsSidebarComponent
   }
 
   ngOnInit(): void {
+    this.originalFavicon = document.querySelector('link[rel="icon"]');
     // this.chatData = history.state.chatUserData;
     this.sharedService.loginUserInfo.subscribe((user) => {
       this.isCallSoundEnabled =
@@ -199,12 +203,21 @@ export class ProfileChatsSidebarComponent
     if (item.groupId) {
       item.isAccepted = 'Y';
     }
-    // this.notificationNavigation()
+    this.notificationNavigation();
     this.onNewChat?.emit(item);
     if (this.searchText) {
       this.searchText = null;
     }
     this.cdr.markForCheck();
+  }
+
+  notificationNavigation() {
+    const isRead = localStorage.getItem('isRead');
+    if (isRead === 'Y') {
+      this.originalFavicon.href = '/assets/images/icon.jpg';
+      this.sharedService.setNotify(false);
+      // this.socketService.readNotification({ profileId: this.profileId }, (data) => { });
+    }
   }
 
   goToViewProfile(): void {
@@ -271,6 +284,9 @@ export class ProfileChatsSidebarComponent
         } else return ele;
       });
       this.messageService.chatList.push(this.newChatList);
+      if (this.chatSidebar) {
+        this.chatSidebar.nativeElement.scrollTop = 0;
+      };
     }
     this.cdr.markForCheck();
   }

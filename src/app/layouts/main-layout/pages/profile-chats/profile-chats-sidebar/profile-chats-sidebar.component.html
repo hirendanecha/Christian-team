@@ -255,7 +255,7 @@
         </button>
       </div> -->
     </div>
-    <div class="header-menu cus-scrollbar overflow-auto position-relative">
+    <div #chatSidebar class="header-menu cus-scrollbar overflow-auto position-relative">
       <ng-container>
         <app-inline-loader class="position-absolute" *ngIf="isChatLoader" />
       </ng-container>
@@ -432,15 +432,13 @@
                 <h6 class="m-0 d-inline-flex sidebar-head-text">
                   {{ item?.groupName || item?.Username }}
                 </h6>
-                <span
-                  class="font-16-px last-message"
+                <span 
+                  class="font-16-px last-message" 
                   *ngIf="item?.lastMessageText !== null"
                   [innerHTML]="
-                    encryptDecryptService.decryptUsingAES256(
-                      item?.lastMessageText
-                    )
-                  "
-                >
+                  item.sentBy === profileId ? (encryptDecryptService.decryptUsingAES256(item.lastMessageText) === 'Missed call'
+                  ? 'No answer' : encryptDecryptService.decryptUsingAES256(item.lastMessageText))
+                  : encryptDecryptService.decryptUsingAES256(item.lastMessageText)">
                 </span>
               </div>
               <div class="d-flex align-items-center">
@@ -513,11 +511,19 @@
             <div class="d-flex gap-2" (click)="dismissSidebar()">
               <div class="avatar">
                 <img
+                  *ngIf="item?.ProfilePicName"
                   class="avatar-img h-40-px w-40-px image-render max-un"
                   src="{{ item?.ProfilePicName }}"
                   [alt]="item?.Username || item?.FirstName"
-                  onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
                 />
+                <div
+                class="default_40"
+                *ngIf="!item?.ProfilePicName"
+                >
+                {{
+                  item?.Username?.substring(0, 2).toUpperCase()
+                }}
+              </div>
               </div>
               <div
                 class="text-area d-flex justify-content-between sidebar-items align-items-center"

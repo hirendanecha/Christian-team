@@ -63,12 +63,12 @@
             </div>
             <div
               class="single-item ms-5"
-              *ngIf="sharedService.callId && !hideOngoingCallButton"
+              *ngIf="isOnCall && !hideOngoingCallButton"
             >
               <div class="ongoing-call d-center position-relative">
                 <a
                   routerLinkActive="active"
-                  [routerLink]="['/facetime/' + sharedService.callId]"
+                  (click)="goToOnGoingCall()"
                   ngbTooltip="On going Call"
                   placement="bottom"
                 >
@@ -179,22 +179,16 @@
       </ul>
 
       <div
-      class="right-area d-lg-flex d-none justify-content-end align-items-center gap-6 cus-z p-0"
-      *ngIf="tokenService.getCredentials()"
+        class="right-area d-lg-flex d-none justify-content-end align-items-center gap-6 cus-z p-0"
+        *ngIf="tokenService.getCredentials()"
       >
-        <div
-          class="single-item"
-          *ngIf="sharedService.callId && !hideOngoingCallButton"
+        <!-- <button
+          class="btn btn-sm font-20-px p-0 rounded-circle h-36-px w-36-px fw-bold userguidebtn"
+          *ngIf="showUserGuideBtn"
+          (click)="openUserGuide()"
         >
-          <div class="ongoing-call d-center position-relative">
-            <a
-              routerLinkActive="active"
-              [routerLink]="['/facetime/' + sharedService.callId]"
-            >
-              <fa-icon [icon]="['fas', 'phone-volume']" class="font-20-px" />
-            </a>
-          </div>
-        </div>
+          ?
+        </button> -->
         <div class="single-item">
           <div class="icon-area d-center position-relative">
             <a

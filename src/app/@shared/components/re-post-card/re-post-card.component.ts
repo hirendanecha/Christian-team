@@ -102,7 +102,7 @@ export class RePostCardComponent implements AfterViewInit, OnInit {
     return `<a href="/settings/view-profile/${
       post.profileid || post.profileId
     }" class="text-danger" data-id="${post.profileid || post.profileId}">@${
-      post.Username
+      post.Username?.replace(/\s+/g, '')
     }</a>`;
   }
 
